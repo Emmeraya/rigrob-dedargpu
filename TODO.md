@@ -1,0 +1,1 @@
+jesteśmy jakby przy lekcja 07, 08 ale to cholerstwo nie działa ani trochę

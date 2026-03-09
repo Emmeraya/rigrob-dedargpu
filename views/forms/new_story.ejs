@@ -1,0 +1,33 @@
+<form action="/add_story/<%=category.id%>" method="POST">
+  <div>
+    <label for="story_title">Tytuł</label>
+    <input
+      type="text"
+      name="title"
+      id="story_title"
+      required
+      minlength="1"
+      maxlength="500"
+      <% if (locals.title){ %>
+      value="<%= title %>"
+      <% }%>
+    />
+  </div>
+  <div>
+    <label for="story_desc">Opis</label>
+    <input
+      type="text"
+      name="desc"
+      id="story_desc"
+      required
+      minlength="1"
+      maxlength="500"
+      <% if (locals.desc){ %>
+      value="<%= desc %>"
+      <% }%>
+    />
+  </div>
+  <div>
+    <button>Dodaj</button>
+  </div>
+</form>
