@@ -15,7 +15,7 @@
   </div>
   <div>
     <label for="story_desc">Opis</label>
-    <input
+    <textarea
       type="text"
       name="desc"
       id="story_desc"
@@ -25,7 +25,8 @@
       <% if (locals.desc){ %>
       value="<%= desc %>"
       <% }%>
-    />
+      >
+      </textarea>
   </div>
   <div>
     <button>Dodaj</button>
