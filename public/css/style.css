@@ -1,7 +1,23 @@
 html {
-    background-color: rgb(6, 77, 65);
+    --backdrop: #830;
+    --background: #ded;
+    --banner-background: #efe;
+    --button-background: #dba;
+    --text-color-normal: #222;
+    --text-color-link: #44e;
+    background-color: var(--backdrop);
+    color: var(--text-color-normal);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 11pt;
+}
+
+html[data-theme='dark'] {
+    --backdrop: #510;
+    --background: #483232;
+    --banner-background: #3a2828;
+    --button-background: rgb(63, 36, 36);
+    --text-color-normal: #ddd;
+    --text-color-link: #77f;
 }
 
 body {
@@ -10,11 +26,41 @@ body {
     min-height: 100vh;
 }
 
-main {
-    background-color: rgb(116, 94, 238);
+.container {
+    background-color: var(--background);
     width: 70rem;
-    padding: 1rem;
     border-radius: 0.5rem;
+}
+
+header {
+    padding: 1rem;
+    display: flex;
+}
+
+textarea{
+    width: 20rem;
+    height: 15rem;
+}
+
+header section.controls {
+    justify-self: end;
+    margin-left: auto;
+}
+
+main {
+    padding: 1rem;
+}
+
+a {
+  outline-color: transparent;
+}
+
+a:link {
+  color: var(--text-color-link);
+}
+
+a:visited {
+  color: var(--text-color-link);
 }
 
 .action-link {
@@ -25,8 +71,112 @@ main {
     display: inline;
 }
 
-input[id=story_desc]
-{
-    width: 30rem;
-    height: 20rem;
+.cookie-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px; 
+  
+  width: 400px; 
+  padding: 25px;
+  
+ 
+  background-color: var(--banner-background);
+  border: 1px solid var(--backdrop);
+  border-radius: 0.5rem;
+  font-family: "Roboto Mono", "Courier New", monospace; 
+  font-size: 0.9rem; 
+  letter-spacing: 0.04rem; 
+  
+  text-transform: uppercase; 
+  
+  box-sizing: border-box;
+}
+.custom-break {
+  display: block;
+  height: 10px;
+  margin: 15px 0; 
+}
+
+#buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  
+  gap: 15px;
+  
+  margin-top: 15px;
+}
+
+#buttonContainer a {
+  text-align: center;
+}
+
+.cookieButton {
+  background-color: var(--background);
+  border: 1px solid var(--backdrop);
+  border-radius: 0.5rem;
+  padding: 10px 20px;
+  
+  cursor: pointer;
+  width: 125px;
+}
+
+a.cookieButton {
+  color: var(--text-color-normal);
+  text-align: center;
+  text-decoration: none;
+
+  font-family: "Roboto Mono", "Courier New", monospace; 
+  font-size: 0.9rem; 
+  text-transform: uppercase;
+  letter-spacing: 0.04rem;
+}
+
+.cookieButton:hover {
+  background-color: var(--button-background);
+}
+
+@media (max-width: 600px) {
+  .cookie-container {
+    width: 90%;
+    bottom: 10px; 
+    left: 5%; 
+    padding: 15px;
+    font-size: 0.8rem; 
+  }
+
+  .cookieButton {
+    padding: 8px 15px;
+  }
+
+  #acceptButton, #declineButton {
+    width: 80%; 
+  }
+
+  #buttonContainer {
+    flex-direction: column; 
+    gap: 10px; 
+    align-items: center;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1024px) {
+  .cookie-container {
+    width: 70%; 
+    bottom: 15px; 
+    left: 15%; 
+    padding: 12px;
+    font-size: 12px;
+  }
+
+  .cookieButton {
+    padding: 9px 18px;
+  }
+
+  #acceptButton, #declineButton {
+    width: 45%;
+  }
+
+  #buttonContainer {
+    gap: 12px;
+  }
 }

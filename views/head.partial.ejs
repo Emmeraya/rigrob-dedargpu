@@ -6,5 +6,21 @@
     <title><%= title %></title>
     <link rel="stylesheet" href="/css/style.css" />
   </head>
-  <body></body>
-</html>
+  <body>
+    <div class="container">
+    <header>
+    <nav>
+      <% if (page !== "/") { %>
+      <a href="/">Powrót do listy kategorii</a>
+      <% } %>
+    </nav>
+    <section class="controls">
+      <a href="/settings/toggle-theme?next=<%- encodeURIComponent(page) %>">
+        <% if (app.theme === "dark") { %>
+        <strong>Ciemny</strong> | Jasny
+        <% } else { %>
+        Ciemny | <strong>Jasny</strong>
+        <% } %>
+      </a>
+    </section>
+    </header>

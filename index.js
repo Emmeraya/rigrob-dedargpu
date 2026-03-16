@@ -1,17 +1,43 @@
 import express from "express";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
+
 import stories from "./systems/stories.js";
+import settings from "./systems/settings.js";
 
 const port = 8000;
+const LAST_VIEWED_COOKIE = "fisz-last-viewed";
 
 const app = express();
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(express.urlencoded());
-
 app.use(morgan("dev"));
+app.use(cookieParser());
+
+function settingsLocals(req, res, next) {
+  res.locals.app = settings.getSettings(req);
+  res.locals.page = req.path;
+  next();
+}
+app.use(settingsLocals);
+
+const settingsRouter = express.Router();
+settingsRouter.use("/toggle-theme", settings.themeToggle);
+settingsRouter.use("/accept-cookies", settings.acceptCookies);
+settingsRouter.use("/decline-cookies", settings.declineCookies);
+settingsRouter.use("/manage-cookies", settings.manageCookies);
+app.use("/settings", settingsRouter);
 
 app.get("/", (req, res) => {
+  var last_viewed_categories = null;
+    if (res.locals.app.cookie_consent && req.cookies[LAST_VIEWED_COOKIE]) {
+      let last_viewed = req.cookies[LAST_VIEWED_COOKIE]?.split(",") || [];
+      last_viewed_categories = last_viewed
+        .map((x) => parseInt(x, 10))
+        .filter((x) => !isNaN(x))
+        .map((id) => stories.getCategorySummary(id));
+    }
   res.render("categories", {
     title: "Kategorie",
     categories: stories.getCategorySummaries(),
@@ -19,6 +45,17 @@ app.get("/", (req, res) => {
 });
 
 app.get("/view/:category_id", (req, res) => {
+  if (res.locals.app.cookie_consent) {
+      let last_viewed_dirty = req.cookies[LAST_VIEWED_COOKIE]?.split(",") || [];
+      let last_viewed = [
+        category.category_id,
+        ...last_viewed_dirty
+          .map((x) => parseInt(x, 10))
+          .filter((x) => !isNaN(x) && x !== category.category_id)
+          .slice(0, 2),
+      ];
+      res.cookie(LAST_VIEWED_COOKIE, last_viewed.join(","));
+    }
   const category = stories.getCategory(req.params.category_id);
   if (category != null) {
     res.render("category", {

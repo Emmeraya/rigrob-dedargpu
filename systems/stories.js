@@ -36,6 +36,9 @@ const db_ops = {
     RETURNING id, title, desc;`
   ),
   get_categories: db.prepare("SELECT id, name FROM categories;"),
+  get_category_summary_by_category_id: db.prepare(
+    "SELECT id, name FROM categories WHERE category_id = ?;"
+  ),
   get_category_by_id: db.prepare(
     "SELECT category_id, id, name FROM categories WHERE id = ?;"
   ),
@@ -53,6 +56,11 @@ const db_ops = {
 
 export function getCategorySummaries() {
   var categories = db_ops.get_categories.all();
+  return categories;
+}
+
+export function getCategorySummary(categoryId) {
+  var categories = db_ops.get_category_summary_by_category_id.all(categoryId);
   return categories;
 }
 
@@ -143,6 +151,7 @@ export function generateCategoryId(name) {
 
 export default {
   getCategorySummaries,
+  getCategorySummary,
   hasStory,
   hasCategory,
   getCategory,
