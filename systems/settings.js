@@ -1,8 +1,8 @@
 "use strict";
 
 const ONE_DAY = 24 * 60 * 60 * 1000;
-const THEME_COOKIE = "fisz-theme";
-const CONSENT_COOKIE = "fisz-consent";
+const THEME_COOKIE = "story-theme";
+const CONSENT_COOKIE = "story-consent";
 
 export function themeToggle(req, res) {
   var theme = req.cookies[THEME_COOKIE];
@@ -32,7 +32,6 @@ export function declineCookies(req, res) {
 }
 
 export function manageCookies(req, res) {
-  // TODO Handle cookie management
   res.render("cookies_manage", {
     title: "Zarządzanie cookies",
   });

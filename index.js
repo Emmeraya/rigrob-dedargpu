@@ -6,7 +6,7 @@ import stories from "./systems/stories.js";
 import settings from "./systems/settings.js";
 
 const port = 8000;
-const LAST_VIEWED_COOKIE = "fisz-last-viewed";
+const LAST_VIEWED_COOKIE = "story-last-viewed";
 
 const app = express();
 app.set("view engine", "ejs");
