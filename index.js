@@ -4,6 +4,8 @@ import cookieParser from "cookie-parser";
 
 import stories from "./systems/stories.js";
 import settings from "./systems/settings.js";
+import session from "./systems/session.js";
+import auth from "./controllers/auth.js";
 
 const port = process.env.PORT || 8000;
 const LAST_VIEWED_COOKIE = "__Host-story-last-viewed";
@@ -26,6 +28,7 @@ app.use(morgan("dev"));
 app.use(cookieParser(SECRET));
 
 app.use(settings.settingsHandler);
+app.use(session.sessionHandler);
 
 const settingsRouter = express.Router();
 settingsRouter.use("/toggle-theme", settings.themeToggle);
@@ -33,6 +36,14 @@ settingsRouter.use("/accept-cookies", settings.acceptCookies);
 settingsRouter.use("/decline-cookies", settings.declineCookies);
 settingsRouter.use("/manage-cookies", settings.manageCookies);
 app.use("/settings", settingsRouter);
+
+const authRouter = express.Router();
+authRouter.get("/signup", auth.signup_get);
+authRouter.post("/signup", auth.signup_post);
+authRouter.get("/login", auth.login_get);
+authRouter.post("/login", auth.login_post);
+authRouter.get("/logout", auth.logout);
+app.use("/auth", authRouter);
 
 app.get("/", (req, res) => {
   var last_viewed_categories = null;
@@ -51,6 +62,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/view/:category_id", (req, res) => {
+  const category = stories.getCategory(req.params.category_id);
   if (res.locals.app.cookie_consent) {
       let last_viewed_dirty = req.cookies[LAST_VIEWED_COOKIE]?.split(",") || [];
       let last_viewed = [
@@ -67,7 +79,6 @@ app.get("/view/:category_id", (req, res) => {
         signed: true,
       });
     }
-  const category = stories.getCategory(req.params.category_id);
   if (category != null) {
     res.render("category", {
       title: category.name,
