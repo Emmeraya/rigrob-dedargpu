@@ -5,22 +5,27 @@ import cookieParser from "cookie-parser";
 import stories from "./systems/stories.js";
 import settings from "./systems/settings.js";
 
-const port = 8000;
-const LAST_VIEWED_COOKIE = "story-last-viewed";
+const port = process.env.PORT || 8000;
+const LAST_VIEWED_COOKIE = "__Host-story-last-viewed";
+const ONE_DAY = 24 * 60 * 60 * 1000;
+const ONE_MONTH = 30 * ONE_DAY;
+const SECRET = process.env.SECRET;
+
+if (SECRET == null) {
+  console.error(
+    "SECRET environment variable missing. Please create an env file or provide SECRET via environment variables."
+  );
+  process.exit(1);
+}
 
 const app = express();
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(express.urlencoded());
 app.use(morgan("dev"));
-app.use(cookieParser());
+app.use(cookieParser(SECRET));
 
-function settingsLocals(req, res, next) {
-  res.locals.app = settings.getSettings(req);
-  res.locals.page = req.path;
-  next();
-}
-app.use(settingsLocals);
+app.use(settings.settingsHandler);
 
 const settingsRouter = express.Router();
 settingsRouter.use("/toggle-theme", settings.themeToggle);
@@ -41,6 +46,7 @@ app.get("/", (req, res) => {
   res.render("categories", {
     title: "Kategorie",
     categories: stories.getCategorySummaries(),
+    last_viewed_categories,
   });
 });
 
@@ -54,7 +60,12 @@ app.get("/view/:category_id", (req, res) => {
           .filter((x) => !isNaN(x) && x !== category.category_id)
           .slice(0, 2),
       ];
-      res.cookie(LAST_VIEWED_COOKIE, last_viewed.join(","));
+      res.cookie(LAST_VIEWED_COOKIE, last_viewed, {
+        httpOnly: true,
+        secure: true,
+        maxAge: ONE_MONTH,
+        signed: true,
+      });
     }
   const category = stories.getCategory(req.params.category_id);
   if (category != null) {
@@ -162,10 +173,8 @@ app.post("/edit/:category_id", (req, res) => {
         category_name
       );
       if (category != null) {
-        // category id may have changed due to name change
         res.redirect("/view/" + category.id);
       } else {
-        // This should never happen
         res.write("Unexpected error while updating category");
         res.sendStatus(500);
       }
