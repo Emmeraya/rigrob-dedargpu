@@ -3,7 +3,7 @@
   
   <h1><%= title %></h1>
   <div>
-    <h3>Nowa kategoria</h3>
+    <h3>Nowy zestaw historyjek</h3>
     <% if (locals.errors != null) {%>
     <ul id="errors">
       <% errors.forEach(function(error){ %>
@@ -11,7 +11,7 @@
       <% }) %>
     </ul>
     <% } %>
-    <%- include("forms/new_category.ejs") %>
+    <%- include("forms/new_storyset.ejs") %>
   </div>
 </main>
 

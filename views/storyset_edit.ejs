@@ -1,0 +1,31 @@
+<%- include("head.partial.ejs") %>
+<main>
+  <h1><%= title %></h1>
+  <div>
+    <% if (locals.errors != null) {%>
+    <ul id="errors">
+      <% errors.forEach(function(error){ %>
+      <li><%= error %></li>
+      <% }) %>
+    </ul>
+    <% } %>
+    <%- include("forms/edit_storyset.ejs") %>
+    <% if (locals.storyset.stories && locals.storyset.stories.length > 0) { %>
+      <ul id="stories">
+        <% storyset.stories.forEach(function(story){ %>
+        <li>
+          <%- include("forms/edit_story.ejs", {story, storyset}) %>
+          <form class="story-action" action="/delete/<%= storyset.slug %>/<%= story.id %>" method="POST">
+            <button>Usuń</button>
+          </form>
+        </li>
+        <% }) %>
+      </ul>
+    <% } else { %>
+      <p>W tym zestawie nie ma żadnych historyjek. Dodaj nowe poniżej.</p>
+    <% } %>
+  </div>
+  <a href="/view/<%= storyset.slug %>">Powrót</a>
+</main>
+
+<%- include("foot.partial.ejs") %>

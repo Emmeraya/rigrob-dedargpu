@@ -1,7 +1,8 @@
-#Instalaja Aplikacji
+# Instalaja Aplikacji
 # npm install express
 # npm install morgan
 # npm install argon2
+# npm install cookie-parser
 # npm run populate_db
 # npm run generate_env
 # npm run dev

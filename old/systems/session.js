@@ -56,7 +56,6 @@ function sessionHandler(req, res, next) {
     }
   }
 
-  // sessionId may look valid but might not exist in db
   if (sessionId != null) session = db_ops.get_session.get(sessionId);
 
   if (session != null) {

@@ -1,4 +1,3 @@
 node_modules/
 db.sqlite
 .env
-03_auth_system

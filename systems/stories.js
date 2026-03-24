@@ -4,110 +4,107 @@ const db_path = "./db.sqlite";
 const db = new DatabaseSync(db_path);
 
 db.exec(
-  `CREATE TABLE IF NOT EXISTS categories (
-    category_id   INTEGER PRIMARY KEY,
-    id            TEXT UNIQUE NOT NULL,
+  `CREATE TABLE IF NOT EXISTS storysets (
+    storyset_id    INTEGER PRIMARY KEY,
+    slug          TEXT UNIQUE NOT NULL,
     name          TEXT NOT NULL
   ) STRICT;
   CREATE TABLE IF NOT EXISTS stories (
-    id            INTEGER PRIMARY KEY,
-    category_id   INTEGER NOT NULL REFERENCES categories(category_id) ON DELETE NO ACTION,
-    title         TEXT NOT NULL,
+    story_id       INTEGER PRIMARY KEY,
+    storyset_id    INTEGER NOT NULL REFERENCES storysets(storyset_id) ON DELETE NO ACTION,
+    titlee         TEXT NOT NULL,
     desc          TEXT NOT NULL
-  ) STRICT;`
+  ) STRICT;`,
 );
 
 const db_ops = {
-  insert_category: db.prepare(
-    "INSERT INTO categories (id, name) VALUES (?, ?) RETURNING category_id, id, name;"
+  insert_storyset: db.prepare(
+    "INSERT INTO storysets (slug, name) VALUES (?, ?) RETURNING storyset_id as id, slug, name;",
   ),
-  update_category_by_id: db.prepare(
-    "UPDATE categories SET id = $new_category_id, name = $name WHERE id = $category_id RETURNING category_id, id, name;"
+  update_storyset_by_slug: db.prepare(
+    "UPDATE storysets SET slug = $new_slug, name = $new_name WHERE slug = $slug RETURNING storyset_id AS id, slug, name;",
   ),
-  insert_story: db.prepare(
-    "INSERT INTO stories (category_id, title, desc) VALUES (?, ?, ?) RETURNING id, title, desc;"
-  ),
-  insert_story_by_category_id: db.prepare(
-    `INSERT INTO stories (category_id, title, desc) VALUES (
-      (SELECT category_id FROM categories WHERE id = ?),
+  insert_story_by_storyset_slug: db.prepare(
+    `INSERT INTO stories (storyset_id, titlee, desc) VALUES (
+      (SELECT storyset_id FROM storysets WHERE slug = ?),
       ?, 
       ?
     ) 
-    RETURNING id, title, desc;`
+    RETURNING story_id AS id, titlee, desc;`,
   ),
-  get_categories: db.prepare("SELECT id, name FROM categories;"),
-  get_category_summary_by_category_id: db.prepare(
-    "SELECT id, name FROM categories WHERE category_id = ?;"
+  get_storyset_summaries: db.prepare("SELECT slug, name FROM storysets;"),
+  get_storyset_summary_by_storyset_id: db.prepare(
+    "SELECT slug, name FROM storysets WHERE storyset_id = ?;",
   ),
-  get_category_by_id: db.prepare(
-    "SELECT category_id, id, name FROM categories WHERE id = ?;"
+  get_storyset_by_slug: db.prepare(
+    "SELECT storyset_id AS id, slug, name FROM storysets WHERE slug = ?;",
   ),
   get_story_by_id: db.prepare(
-    "SELECT id, title, desc FROM stories WHERE id = ?;"
+    "SELECT story_id AS id, titlee, desc FROM stories WHERE story_id = ?;",
   ),
   update_story_by_id: db.prepare(
-    "UPDATE stories SET title = ?, desc = ? WHERE id = ? RETURNING id, title, desc;"
+    "UPDATE stories SET titlee = ?, desc = ? WHERE story_id = ? RETURNING story_id, titlee, desc;",
   ),
-  delete_story_by_id: db.prepare("DELETE FROM stories WHERE id = ?;"),
-  get_stories_by_category_id: db.prepare(
-    "SELECT id, title, desc FROM stories WHERE category_id = ?;"
+  delete_story_by_id: db.prepare("DELETE FROM stories WHERE story_id = ?;"),
+  get_stories_by_storyset_id: db.prepare(
+    "SELECT story_id AS id, titlee, desc FROM stories WHERE storyset_id = ?;",
   ),
 };
 
-export function getCategorySummaries() {
-  var categories = db_ops.get_categories.all();
-  return categories;
+export function getStorysetSummaries() {
+  var storysets = db_ops.get_storyset_summaries.all();
+  return storysets;
 }
 
-export function getCategorySummary(categoryId) {
-  var categories = db_ops.get_category_summary_by_category_id.all(categoryId);
-  return categories;
+export function getStorysetSummary(storysetId) {
+  var storysets = db_ops.get_storyset_summary_by_storyset_id.get(storysetId);
+  return storysets;
 }
 
-export function hasCategory(categoryId) {
-  let category = db_ops.get_category_by_id.get(categoryId);
-  return category != null;
+export function hasStoryset(slug) {
+  let storyset = db_ops.get_storyset_by_slug.get(slug);
+  return storyset != null;
 }
 
 export function hasStory(storyId) {
-  let category = db_ops.get_story_by_id.get(storyId);
-  return category != null;
+  let storyset = db_ops.get_story_by_id.get(storyId);
+  return storyset != null;
 }
 
-export function getCategory(categoryId) {
-  let category = db_ops.get_category_by_id.get(categoryId);
-  if (category != null) {
-    category.stories = db_ops.get_stories_by_category_id.all(category.category_id);
-    return category;
+export function getStoryset(slug) {
+  let storyset = db_ops.get_storyset_by_slug.get(slug);
+  if (storyset != null) {
+    storyset.stories = db_ops.get_stories_by_storyset_id.all(storyset.id);
+    return storyset;
   }
   return null;
 }
 
-export function addStory(categoryId, story) {
-  return db_ops.insert_story_by_category_id.get(
-    categoryId,
-    story.title,
-    story.desc
+export function addStory(storysetSlug, story) {
+  return db_ops.insert_story_by_storyset_slug.get(
+    storysetSlug,
+    story.titlee,
+    story.desc,
   );
 }
 
 export function updateStory(story) {
-  return db_ops.update_story_by_id.get(story.title, story.desc, story.id);
+  return db_ops.update_story_by_id.get(story.titlee, story.desc, story.id);
 }
 
-export function deleteStoryById(storyId) {
-  return db_ops.delete_story_by_id.run(storyId);
+export function deleteStoryById(StoryId) {
+  return db_ops.delete_story_by_id.run(StoryId);
 }
 
-export function addCategory(categoryId, name) {
-  return db_ops.insert_category.get(categoryId, name);
+export function addStoryset(slug, name) {
+  return db_ops.insert_storyset.get(slug, name);
 }
 
-export function updateCategory(categoryId, newCategoryId, name) {
-  return db_ops.update_category_by_id.get({
-    $category_id: categoryId,
-    $new_category_id: newCategoryId,
-    $name: name,
+export function updateStoryset(slug, newSlug, newName) {
+  return db_ops.update_storyset_by_slug.get({
+    $slug: slug,
+    $new_slug: newSlug,
+    $new_name: newName,
   });
 }
 
@@ -127,40 +124,40 @@ export function validateStoryData(story) {
   }
   return errors;
 }
-export function validateCategoryName(name) {
+export function validateStorysetName(name) {
   var errors = [];
   if (typeof name != "string") {
-    errors.push("Category name should be a string");
+    errors.push("Storyset name should be a string");
   } else {
     if (name.length < 3 || name.length > 100) {
-      errors.push("Category name should have 3-100 characters");
+      errors.push("Storyset name should have 3-100 characters");
     }
   }
 
   return errors;
 }
 
-export function generateCategoryId(name) {
-  const categoryId = name
+export function generateStorysetSlug(name) {
+  const storysetId = name
     .toLowerCase()
     .replace(/(\s|[.-])+/g, "-")
     .replace(/[^a-z0-9.-]/g, "");
 
-  return categoryId;
+  return storysetId;
 }
 
 export default {
-  getCategorySummaries,
-  getCategorySummary,
+  getStorysetSummaries,
+  getStorysetSummary,
   hasStory,
-  hasCategory,
-  getCategory,
+  hasStoryset,
+  getStoryset,
   addStory,
   updateStory,
   deleteStoryById,
-  addCategory,
-  updateCategory,
+  addStoryset,
+  updateStoryset,
   validateStoryData,
-  validateCategoryName,
-  generateCategoryId,
+  validateStorysetName,
+  generateStorysetSlug,
 };

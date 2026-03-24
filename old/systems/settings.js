@@ -14,27 +14,25 @@ export function themeToggle(req, res) {
     theme = "dark";
   }
   res.cookie(THEME_COOKIE, theme, { maxAge: ONE_MONTH, secure: true });
-
   var next = req.query.next || "/";
   res.redirect(next);
 }
 
 export function acceptCookies(req, res) {
-  res.cookie(CONSENT_COOKIE, true, CONSENT_PARAMS);
+   res.cookie(CONSENT_COOKIE, true, CONSENT_PARAMS);
 
   var next = req.query.next || "/";
   res.redirect(next);
 }
 
 export function declineCookies(req, res) {
-  res.cookie(CONSENT_COOKIE, false, CONSENT_PARAMS);
+   res.cookie(CONSENT_COOKIE, false, CONSENT_PARAMS);
 
   var next = req.query.next || "/";
   res.redirect(next);
 }
 
-export function manageCookies(req, res) {
-  // TODO Handle cookie management
+export function manageCookies(req, res) { //make this work at some point
   res.render("cookies_manage", {
     title: "Zarządzanie cookies",
   });

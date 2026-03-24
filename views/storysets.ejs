@@ -1,0 +1,24 @@
+<%- include("head.partial.ejs") %>
+
+<main>
+  <h1><%= title %></h1>
+  <% if (last_viewed_storysets?.length > 0) { %>
+  <h2>Ostatnio przeglądane</h2>
+  <ul id="recently_viewed">
+    <% last_viewed_storysets.forEach(function(storyset){ %>
+    <li><a href="/view/<%= storyset.id %>"><%= storyset.name %></a></li>
+    <% }) %>
+  </ul>
+  <h2>Wszystkie</h2>
+  <% } /* (last_viewed_storysets.length > 0) */ %>
+  <ul id="storysets">
+    <% storysets.forEach(function(storyset){ %>
+    <li><a href="/view/<%= storyset.id %>"><%= storyset.name %></a></li>
+    <% }) %>
+  </ul>
+  <% if (user != null) { %>
+  <a href="/new_storyset">Dodaj nowy zestaw historyjek</a>
+  <% } %>
+</main>
+
+<%- include("foot.partial.ejs") %>

@@ -1,0 +1,19 @@
+<form action="/edit/<%= storyset.slug %>" method="POST">
+  <div>
+    <label for="storyset_name">Nazwa zestawu</label>
+    <input
+      type="text"
+      name="name"
+      id="storyset_name"
+      required
+      minlength="3"
+      maxlength="100"
+      <% if (locals.storyset.name){ %>
+      value="<%= storyset.name %>"
+      <% }%>
+    />
+  </div>
+  <div>
+    <button>Zapisz</button>
+  </div>
+</form>

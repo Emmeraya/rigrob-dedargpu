@@ -1,17 +1,17 @@
 <%- include("head.partial.ejs") %>
 <main>
   <h1><%= title %></h1>
-  <a href="/edit/<%= category.id %>" class="action-link">Edytuj katergorię</a>
-  <% if (category.stories && category.stories.length > 0) { %>
+  <a href="/edit/<%= storyset.slug %>" class="action-link">Edytuj katergorię</a>
+  <% if (storyset.stories && storyset.stories.length > 0) { %>
     <ul id="stories">
-      <% category.stories.forEach(function(story){ %>
+      <% storyset.stories.forEach(function(story){ %>
       <li>
         <%= story.title %> - <%= story.desc %>
       </li>
       <% }) %>
     </ul>
   <% } else { %>
-    <p>W tej kategorii nie ma żadnych historyjek. Dodaj nowe poniżej.</p>
+    <p>W tym zestawie nie ma żadnych historyjek. Dodaj nowe poniżej.</p>
   <% } %>
   <div>
     <h3>Nowa Historyjka</h3>
