@@ -97,7 +97,7 @@ app.post("/add_story/:storyset_slug", auth.login_required, (req, res) => {
     res.sendStatus(404);
   } else {
     let story_data = {
-      titlee: req.body.titlee,
+      title: req.body.title,
       desc: req.body.desc,
     };
     var errors = stories.validateStoryData(story_data);
@@ -109,7 +109,7 @@ app.post("/add_story/:storyset_slug", auth.login_required, (req, res) => {
       res.render("new_story", {
         errors,
         title: "Nowa historyjka",
-        titlee: req.body.titlee,
+        title: req.body.title,
         desc: req.body.desc,
         storyset: {
           id: storyset_slug,
@@ -215,7 +215,7 @@ app.post("/edit/:storyset_slug/:story_id", auth.login_required, (req, res) => {
     res.sendStatus(404);
   } else {
     const story = {
-      titlee: req.body.titlee,
+      title: req.body.title,
       desc: req.body.desc,
       id: story_id,
     };

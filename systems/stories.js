@@ -12,7 +12,7 @@ db.exec(
   CREATE TABLE IF NOT EXISTS stories (
     story_id       INTEGER PRIMARY KEY,
     storyset_id    INTEGER NOT NULL REFERENCES storysets(storyset_id) ON DELETE NO ACTION,
-    titlee         TEXT NOT NULL,
+    title         TEXT NOT NULL,
     desc          TEXT NOT NULL
   ) STRICT;`,
 );
@@ -25,12 +25,12 @@ const db_ops = {
     "UPDATE storysets SET slug = $new_slug, name = $new_name WHERE slug = $slug RETURNING storyset_id AS id, slug, name;",
   ),
   insert_story_by_storyset_slug: db.prepare(
-    `INSERT INTO stories (storyset_id, titlee, desc) VALUES (
+    `INSERT INTO stories (storyset_id, title, desc) VALUES (
       (SELECT storyset_id FROM storysets WHERE slug = ?),
       ?, 
       ?
     ) 
-    RETURNING story_id AS id, titlee, desc;`,
+    RETURNING story_id AS id, title, desc;`,
   ),
   get_storyset_summaries: db.prepare("SELECT slug, name FROM storysets;"),
   get_storyset_summary_by_storyset_id: db.prepare(
@@ -40,14 +40,14 @@ const db_ops = {
     "SELECT storyset_id AS id, slug, name FROM storysets WHERE slug = ?;",
   ),
   get_story_by_id: db.prepare(
-    "SELECT story_id AS id, titlee, desc FROM stories WHERE story_id = ?;",
+    "SELECT story_id AS id, title, desc FROM stories WHERE story_id = ?;",
   ),
   update_story_by_id: db.prepare(
-    "UPDATE stories SET titlee = ?, desc = ? WHERE story_id = ? RETURNING story_id, titlee, desc;",
+    "UPDATE stories SET title = ?, desc = ? WHERE story_id = ? RETURNING story_id, title, desc;",
   ),
   delete_story_by_id: db.prepare("DELETE FROM stories WHERE story_id = ?;"),
   get_stories_by_storyset_id: db.prepare(
-    "SELECT story_id AS id, titlee, desc FROM stories WHERE storyset_id = ?;",
+    "SELECT story_id AS id, title, desc FROM stories WHERE storyset_id = ?;",
   ),
 };
 
@@ -83,13 +83,13 @@ export function getStoryset(slug) {
 export function addStory(storysetSlug, story) {
   return db_ops.insert_story_by_storyset_slug.get(
     storysetSlug,
-    story.titlee,
+    story.title,
     story.desc,
   );
 }
 
 export function updateStory(story) {
-  return db_ops.update_story_by_id.get(story.titlee, story.desc, story.id);
+  return db_ops.update_story_by_id.get(story.title, story.desc, story.id);
 }
 
 export function deleteStoryById(StoryId) {
