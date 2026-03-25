@@ -52,7 +52,14 @@ header section.controls {
 }
 
 main {
+  text-align: center;
     padding: 1rem;
+}
+ul{
+  padding:0px;
+}
+li::marker{
+  color: #f800ec00;
 }
 
 a {
