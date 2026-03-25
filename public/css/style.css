@@ -16,8 +16,9 @@ html {
 
 html[data-theme='dark'] {
     --backdrop: #510;
-    --background: #483232;
-    --banner-background: #3a2828;
+    background-image: url("cheese_v2.png");
+    --background: #4832329f;
+    --banner-background: #3a28287c;
     --button-background: rgb(63, 36, 36);
     --text-color-normal: #ddd;
     --text-color-link: #77f;
