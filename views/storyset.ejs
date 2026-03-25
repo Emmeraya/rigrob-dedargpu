@@ -6,7 +6,8 @@
     <ul id="stories">
       <% storyset.stories.forEach(function(story){ %>
       <li>
-        <%= story.title %> - <%= story.desc %>
+        <b><h3><%= story.title %></h3></b> 
+        <%= story.desc %>
       </li>
       <% }) %>
     </ul>
