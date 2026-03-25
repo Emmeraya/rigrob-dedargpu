@@ -1,6 +1,9 @@
 html {
-    --backdrop: #830;
-    --background: #ded;
+    --background: rgba(221, 238, 221, 0.466);
+    background-image: url("cheeseburger.png");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size:cover;
     --banner-background: #efe;
     --button-background: #dba;
     --text-color-normal: #222;
@@ -174,9 +177,5 @@ a.cookieButton {
 
   #acceptButton, #declineButton {
     width: 45%;
-  }
-
-  #buttonContainer {
-    gap: 12px;
   }
 }
