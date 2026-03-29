@@ -6,6 +6,7 @@ import stories from "./systems/stories.js";
 import settings from "./systems/settings.js";
 import session from "./systems/session.js";
 import auth from "./controllers/auth.js";
+import user from "./systems/user.js";
 
 const port = process.env.PORT || 8000;
 const LAST_VIEWED_COOKIE = "__Host-story-last-viewed";
@@ -45,7 +46,6 @@ authRouter.post("/login", auth.login_post);
 authRouter.get("/logout", auth.logout);
 app.use("/auth", authRouter);
 
-
 app.get("/", (req, res) => {
   var last_viewed_storysets = null;
   if (res.locals.app.cookie_consent && req.signedCookies[LAST_VIEWED_COOKIE]) {
@@ -62,9 +62,9 @@ app.get("/", (req, res) => {
   });
 });
 
-
 app.get("/view/:storyset_slug", (req, res) => {
   const storyset = stories.getStoryset(req.params.storyset_slug);
+  storyset.author =user.getUser(storyset.author_id);
   if (storyset != null) {
     if (res.locals.app.cookie_consent) {
       let last_viewed_dirty = req.signedCookies[LAST_VIEWED_COOKIE] || [];
@@ -96,25 +96,31 @@ app.post("/add_story/:storyset_slug", auth.login_required, (req, res) => {
   if (!stories.hasStoryset(storyset_slug)) {
     res.sendStatus(404);
   } else {
-    let story_data = {
+    if (!stories.canEdit(storyset_slug, res.locals.user)) {
+          res.status(401);
+          res.redirect("/");
+    }
+    else{
+      let story_data = {
       title: req.body.title,
       desc: req.body.desc,
     };
-    var errors = stories.validateStoryData(story_data);
-    if (errors.length == 0) {
-      stories.addStory(storyset_slug, story_data);
-      res.redirect(`/view/${storyset_slug}`);
-    } else {
-      res.status(400);
-      res.render("new_story", {
-        errors,
-        title: "Nowa historyjka",
-        title: req.body.title,
-        desc: req.body.desc,
-        storyset: {
-          id: storyset_slug,
-        },
-      });
+      var errors = stories.validateStoryData(story_data);
+      if (errors.length == 0) {
+        stories.addStory(storyset_slug, story_data);
+        res.redirect(`/view/${storyset_slug}`);
+      } else {
+        res.status(400);
+        res.render("new_story", {
+          errors,
+          title: "Nowa historyjka",
+          title: req.body.title,
+          desc: req.body.desc,
+          storyset: {
+            id: storyset_slug,
+          },
+        });
+      }
     }
   }
 });
@@ -141,7 +147,7 @@ app.post("/new_storyset", auth.login_required, (req, res) => {
   }
 
   if (errors.length == 0) {
-    stories.addStoryset(storyset_slug, storyset_name);
+    stories.addStoryset(storyset_slug, storyset_name, res.locals.user);
     res.redirect(`/view/${storyset_slug}`);
   } else {
     res.status(400);
@@ -158,11 +164,16 @@ app.get("/edit/:storyset_slug", auth.login_required, (req, res) => {
   const errors = [];
   var storyset = stories.getStoryset(storyset_slug);
   if (storyset != null) {
-    res.render("storyset_edit", {
-      errors,
-      title: "Edycja zestawu",
-      storyset,
-    });
+    if (!storyset.editableBy(res.locals.user)) {
+      res.status(401);
+      res.redirect("/");
+    } else {
+      res.render("storyset_edit", {
+        errors,
+        title: "Edycja zestawu",
+        storyset,
+      });
+    }
   } else {
     res.sendStatus(404);
   }
@@ -171,37 +182,42 @@ app.get("/edit/:storyset_slug", auth.login_required, (req, res) => {
 app.post("/edit/:storyset_slug", auth.login_required, (req, res) => {
   const storyset_slug = req.params.storyset_slug;
   if (stories.hasStoryset(storyset_slug)) {
-    const storyset_name = req.body.name;
-    var new_storyset_slug = null;
-    const errors = stories.validateStorysetName(storyset_name);
-    if (errors.length == 0) {
-      new_storyset_slug = stories.generateStorysetSlug(storyset_name);
-      if (
-        new_storyset_slug !== storyset_slug &&
-        stories.hasStoryset(new_storyset_slug)
-      ) {
-        errors.push("Storyset id is already taken");
-      }
-    }
-    if (errors.length == 0) {
-      const storyset = stories.updateStoryset(
-        storyset_slug,
-        new_storyset_slug,
-        storyset_name,
-      );
-      if (storyset != null) {
-        res.redirect("/view/" + storyset.slug);
-      } else {
-        res.write("Unexpected error while updating storyset");
-        res.sendStatus(500);
-      }
+    if (!stories.canEdit(storyset_slug, res.locals.user)) {
+          res.status(401);
+          res.redirect("/");
     } else {
-      const storyset = stories.getStoryset(storyset_slug);
-      res.render("storyset_edit", {
-        errors,
-        title: "Edycja zestawu",
-        storyset,
-      });
+      const storyset_name = req.body.name;
+      var new_storyset_slug = null;
+      const errors = stories.validateStorysetName(storyset_name);
+      if (errors.length == 0) {
+        new_storyset_slug = stories.generateStorysetSlug(storyset_name);
+        if (
+          new_storyset_slug !== storyset_slug &&
+          stories.hasStoryset(new_storyset_slug)
+        ) {
+          errors.push("Storyset id is already taken");
+        }
+      }
+      if (errors.length == 0) {
+        const storyset = stories.updateStoryset(
+          storyset_slug,
+          new_storyset_slug,
+          storyset_name,
+        );
+        if (storyset != null) {
+          res.redirect("/view/" + storyset.slug);
+        } else {
+          res.write("Unexpected error while updating storyset");
+          res.sendStatus(500);
+        }
+      } else {
+        const storyset = stories.getStoryset(storyset_slug);
+        res.render("storyset_edit", {
+          errors,
+          title: "Edycja zestawu",
+          storyset,
+        });
+      }
     }
   } else {
     res.sendStatus(404);
@@ -214,22 +230,27 @@ app.post("/edit/:storyset_slug/:story_id", auth.login_required, (req, res) => {
   if (!stories.hasStoryset(storyset_slug) || !stories.hasStory(story_id)) {
     res.sendStatus(404);
   } else {
-    const story = {
-      title: req.body.title,
-      desc: req.body.desc,
-      id: story_id,
-    };
-    const errors = stories.validateStoryData(story);
-    if (errors.length == 0) {
-      stories.updateStory(story);
-      res.redirect(`/edit/${storyset_slug}`);
+    if (!stories.canEdit(storyset_slug, res.locals.user)) {
+          res.status(401);
+          res.redirect("/");
     } else {
-      let storyset = stories.getStoryset(storyset_slug);
-      res.render("storyset_edit", {
-        errors,
-        title: "Edycja zestawu",
-        storyset,
-      });
+      const story = {
+        title: req.body.title,
+        desc: req.body.desc,
+        id: story_id,
+      };
+      const errors = stories.validateStoryData(story);
+      if (errors.length == 0) {
+        stories.updateStory(story);
+        res.redirect(`/edit/${storyset_slug}`);
+      } else {
+        let storyset = stories.getStoryset(storyset_slug);
+        res.render("storyset_edit", {
+          errors,
+          title: "Edycja zestawu",
+          storyset,
+        });
+      }
     }
   }
 });
@@ -244,8 +265,13 @@ app.post("/delete/:storyset_slug/:story_id", auth.login_required, (req, res) => 
   if (!stories.hasStoryset(storyset_slug) || !stories.hasStory(story_id)) {
     res.sendStatus(404);
   } else {
-    stories.deleteStoryById(story_id);
-    res.redirect(`/edit/${storyset_slug}`);
+    if (!stories.canEdit(storyset_slug, res.locals.user)) {
+          res.status(401);
+          res.redirect("/");
+    } else {
+      stories.deleteStoryById(story_id);
+      res.redirect(`/edit/${storyset_slug}`);
+    }
   }
 });
 

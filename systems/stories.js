@@ -7,7 +7,8 @@ db.exec(
   `CREATE TABLE IF NOT EXISTS storysets (
     storyset_id    INTEGER PRIMARY KEY,
     slug          TEXT UNIQUE NOT NULL,
-    name          TEXT NOT NULL
+    name          TEXT NOT NULL,
+    author_id     INTEGER NOT NULL REFERENCES users(user_id) ON DELETE NO ACTION
   ) STRICT;
   CREATE TABLE IF NOT EXISTS stories (
     story_id       INTEGER PRIMARY KEY,
@@ -19,10 +20,12 @@ db.exec(
 
 const db_ops = {
   insert_storyset: db.prepare(
-    "INSERT INTO storysets (slug, name) VALUES (?, ?) RETURNING storyset_id as id, slug, name;",
+    `INSERT INTO storysets (slug, name, author_id) 
+     VALUES (?, ?, ?) RETURNING storyset_id as id, slug, name;`,
   ),
   update_storyset_by_slug: db.prepare(
-    "UPDATE storysets SET slug = $new_slug, name = $new_name WHERE slug = $slug RETURNING storyset_id AS id, slug, name;",
+    `UPDATE storysets SET slug = $new_slug, name = $new_name 
+      WHERE slug = $slug RETURNING storyset_id AS id, slug, name, author_id;`,
   ),
   insert_story_by_storyset_slug: db.prepare(
     `INSERT INTO stories (storyset_id, title, desc) VALUES (
@@ -32,12 +35,12 @@ const db_ops = {
     ) 
     RETURNING story_id AS id, title, desc;`,
   ),
-  get_storyset_summaries: db.prepare("SELECT slug, name FROM storysets;"),
+  get_storyset_summaries: db.prepare("SELECT slug, name, author_id FROM storysets;"),
   get_storyset_summary_by_storyset_id: db.prepare(
-    "SELECT slug, name FROM storysets WHERE storyset_id = ?;",
+    "SELECT slug, name, author_id FROM storysets WHERE storyset_id = ?;",
   ),
   get_storyset_by_slug: db.prepare(
-    "SELECT storyset_id AS id, slug, name FROM storysets WHERE slug = ?;",
+    "SELECT storyset_id AS id, slug, name, author_id FROM storysets WHERE slug = ?;",
   ),
   get_story_by_id: db.prepare(
     "SELECT story_id AS id, title, desc FROM stories WHERE story_id = ?;",
@@ -75,9 +78,15 @@ export function getStoryset(slug) {
   let storyset = db_ops.get_storyset_by_slug.get(slug);
   if (storyset != null) {
     storyset.stories = db_ops.get_stories_by_storyset_id.all(storyset.id);
+    storyset.editableBy = storysetEditableBy;
+
     return storyset;
   }
   return null;
+}
+
+function storysetEditableBy(user) {
+  return user != null && (this.author_id === user.id || user.is_admin);
 }
 
 export function addStory(storysetSlug, story) {
@@ -96,8 +105,8 @@ export function deleteStoryById(StoryId) {
   return db_ops.delete_story_by_id.run(StoryId);
 }
 
-export function addStoryset(slug, name) {
-  return db_ops.insert_storyset.get(slug, name);
+export function addStoryset(slug, name, author) {
+  return db_ops.insert_storyset.get(slug, name, author.id);
 }
 
 export function updateStoryset(slug, newSlug, newName) {
@@ -146,6 +155,13 @@ export function generateStorysetSlug(name) {
   return storysetId;
 }
 
+export function canEdit(storysetSlug, user) {
+  let storyset = db_ops.get_storyset_by_slug.get(storysetSlug);
+  storyset.editableBy = storysetEditableBy;
+
+  return storyset.editableBy(user);
+}
+
 export default {
   getStorysetSummaries,
   getStorysetSummary,
@@ -160,4 +176,5 @@ export default {
   validateStoryData,
   validateStorysetName,
   generateStorysetSlug,
+  canEdit,
 };

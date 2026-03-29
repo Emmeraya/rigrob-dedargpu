@@ -1,4 +1,5 @@
 import stories from "../systems/stories.js";
+import user from "../systems/user.js";
 
 const storysets = {
   "fantasy": {
@@ -24,8 +25,16 @@ const storysets = {
 
 console.log("Populating db...");
 
+let admin = await user.createUser("admin", "changeme");
+let errMsg = user.addAttribute(admin.id, "is_admin", true);
+if (errMsg) {
+  console.error(errMsg);
+}
+
+let student = await user.createUser("student", "changeme");
+
 Object.entries(storysets).map(([slug, data]) => {
-  let storyset = stories.addStoryset(slug, data.name);
+  let storyset = stories.addStoryset(slug, data.name, student);
   for (let story of data.stories) {
     let s = stories.addStory(storyset.slug, story);
   }

@@ -18,26 +18,33 @@ const db = new DatabaseSync(db_path);
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
-    id              INTEGER PRIMARY KEY,
+    user_id         INTEGER PRIMARY KEY,
     username        TEXT UNIQUE,
     passhash        TEXT,
+    attributes      TEXT DEFAULT NULL,
     created_at      INTEGER
   ) STRICT;
   `);
 
 const db_ops = {
   create_user: db.prepare(
-    "INSERT INTO users (username, passhash, created_at) VALUES (?, ?, ?) RETURNING id;",
+    "INSERT INTO users (username, passhash, created_at) VALUES (?, ?, ?) RETURNING user_id AS id;",
   ),
   get_user: db.prepare(
-    "SELECT id, username, created_at FROM users WHERE id = ?;",
+    "SELECT user_id AS id, username, attributes, created_at FROM users WHERE user_id = ?;",
   ),
   find_by_username: db.prepare(
-    "SELECT id, username, created_at FROM users WHERE username = ?;",
+    "SELECT user_id AS id, username, attributes, created_at FROM users WHERE username = ?;",
   ),
   get_auth_data: db.prepare(
-    "SELECT id, passhash FROM users WHERE username = ?;",
+    "SELECT user_id AS id, passhash FROM users WHERE username = ?;",
   ),
+    get_attributes: db.prepare(
+    `SELECT attributes FROM users WHERE user_id = ?;`,
+  ),
+  update_attributes: db.prepare(
+    `UPDATE users SET attributes = ? WHERE user_id = ?;`,
+  )
 };
 
 export async function createUser(username, password) {
@@ -62,12 +69,54 @@ export async function validatePassword(username, password) {
   return null;
 }
 
-export function getUser(user_id) {
-  return db_ops.get_user.get(user_id);
+export function getUser(userId) {
+  let { id, username, attributes, created_at } = db_ops.get_user.get(userId);
+  return {
+    id,
+    username,
+    created_at,
+    ...JSON.parse(attributes),
+  };
 }
+
+const forbiddenAttributeNames = new Set([
+  "username",
+  "id",
+  "user_id",
+  "passhash",
+  "attributes",
+  "created_at",
+]);
+const allowedAttributeValueTypes = new Set(["string", "boolean", "number"]);
+const attributeNameRegex = /^[a-z_]+$/;
+
+export function addAttribute(userId, name, value) {
+  if (typeof name != "string") {
+    return "attribute name must be a string";
+  }
+  if (forbiddenAttributeNames.has(name)) {
+    return "forbidden attribute name";
+  }
+  if (!name.match(attributeNameRegex)) {
+    return "attribute name should consist of lowercase letters and underscores";
+  }
+  if (!allowedAttributeValueTypes.has(typeof value)) {
+    return "only simple value types are allowed";
+  }
+
+  let queryResult = db_ops.get_attributes.get(userId);
+  let attributes =
+    queryResult.attributes != null ? JSON.parse(queryResult.attributes) : {};
+  attributes[name] = value;
+  db_ops.update_attributes.run(JSON.stringify(attributes), userId);
+
+  return null;
+}
+
 
 export default {
   createUser,
   validatePassword,
   getUser,
+  addAttribute,
 };
