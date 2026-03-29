@@ -1,6 +1,6 @@
 <form class="story-action" action="/edit/<%= storyset.slug %>/<%= story.id %>" method="POST">
-    <input type="text" name="title" id="story-<%= story.id %>-title" value="<%= story.title %>" required minlength="1" maxlength="500"> 
+    <input type="text" name="tytul" id="story-<%= story.id %>-tytul" value="<%= story.tytul %>" required minlength="1" maxlength="500"> 
     -
-    <input type="text" name="desc" id="story-<%= story.id %>-desc" value="<%= story.desc %>" required minlength="1" maxlength="500"> 
+    <input type="text" name="opis" id="story-<%= story.id %>-opis" value="<%= story.opis %>" required minlength="1" maxlength="500"> 
     <button>Zapisz</button>
 </form>

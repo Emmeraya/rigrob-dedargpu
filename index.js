@@ -102,8 +102,8 @@ app.post("/add_story/:storyset_slug", auth.login_required, (req, res) => {
     }
     else{
       let story_data = {
-      title: req.body.title,
-      desc: req.body.desc,
+      tytul: req.body.tytul,
+      opis: req.body.opis,
     };
       var errors = stories.validateStoryData(story_data);
       if (errors.length == 0) {
@@ -114,8 +114,8 @@ app.post("/add_story/:storyset_slug", auth.login_required, (req, res) => {
         res.render("new_story", {
           errors,
           title: "Nowa historyjka",
-          title: req.body.title,
-          desc: req.body.desc,
+          tytul: req.body.tytul,
+          opis: req.body.opis,
           storyset: {
             id: storyset_slug,
           },
@@ -235,8 +235,8 @@ app.post("/edit/:storyset_slug/:story_id", auth.login_required, (req, res) => {
           res.redirect("/");
     } else {
       const story = {
-        title: req.body.title,
-        desc: req.body.desc,
+        tytul: req.body.tytul,
+        opis: req.body.opis,
         id: story_id,
       };
       const errors = stories.validateStoryData(story);

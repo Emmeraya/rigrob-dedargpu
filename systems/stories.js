@@ -6,15 +6,15 @@ const db = new DatabaseSync(db_path);
 db.exec(
   `CREATE TABLE IF NOT EXISTS storysets (
     storyset_id    INTEGER PRIMARY KEY,
+    author_id     INTEGER NOT NULL REFERENCES users(user_id) ON DELETE NO ACTION,
     slug          TEXT UNIQUE NOT NULL,
-    name          TEXT NOT NULL,
-    author_id     INTEGER NOT NULL REFERENCES users(user_id) ON DELETE NO ACTION
+    name          TEXT NOT NULL
   ) STRICT;
   CREATE TABLE IF NOT EXISTS stories (
     story_id       INTEGER PRIMARY KEY,
     storyset_id    INTEGER NOT NULL REFERENCES storysets(storyset_id) ON DELETE NO ACTION,
-    title         TEXT NOT NULL,
-    desc          TEXT NOT NULL
+    tytul         TEXT NOT NULL,
+    opis          TEXT NOT NULL
   ) STRICT;`,
 );
 
@@ -28,12 +28,12 @@ const db_ops = {
       WHERE slug = $slug RETURNING storyset_id AS id, slug, name, author_id;`,
   ),
   insert_story_by_storyset_slug: db.prepare(
-    `INSERT INTO stories (storyset_id, title, desc) VALUES (
+    `INSERT INTO stories (storyset_id, tytul, opis) VALUES (
       (SELECT storyset_id FROM storysets WHERE slug = ?),
       ?, 
       ?
     ) 
-    RETURNING story_id AS id, title, desc;`,
+    RETURNING story_id AS id, tytul, opis;`,
   ),
   get_storyset_summaries: db.prepare("SELECT slug, name, author_id FROM storysets;"),
   get_storyset_summary_by_storyset_id: db.prepare(
@@ -43,14 +43,14 @@ const db_ops = {
     "SELECT storyset_id AS id, slug, name, author_id FROM storysets WHERE slug = ?;",
   ),
   get_story_by_id: db.prepare(
-    "SELECT story_id AS id, title, desc FROM stories WHERE story_id = ?;",
+    "SELECT story_id AS id, tytul, opis FROM stories WHERE story_id = ?;",
   ),
   update_story_by_id: db.prepare(
-    "UPDATE stories SET title = ?, desc = ? WHERE story_id = ? RETURNING story_id, title, desc;",
+    "UPDATE stories SET tytul = ?, opis = ? WHERE story_id = ? RETURNING story_id, tytul, opis;",
   ),
   delete_story_by_id: db.prepare("DELETE FROM stories WHERE story_id = ?;"),
   get_stories_by_storyset_id: db.prepare(
-    "SELECT story_id AS id, title, desc FROM stories WHERE storyset_id = ?;",
+    "SELECT story_id AS id, tytul, opis FROM stories WHERE storyset_id = ?;",
   ),
 };
 
@@ -92,13 +92,13 @@ function storysetEditableBy(user) {
 export function addStory(storysetSlug, story) {
   return db_ops.insert_story_by_storyset_slug.get(
     storysetSlug,
-    story.title,
-    story.desc,
+    story.tytul,
+    story.opis,
   );
 }
 
 export function updateStory(story) {
-  return db_ops.update_story_by_id.get(story.title, story.desc, story.id);
+  return db_ops.update_story_by_id.get(story.tytul, story.opis, story.id);
 }
 
 export function deleteStoryById(StoryId) {
@@ -119,7 +119,7 @@ export function updateStoryset(slug, newSlug, newName) {
 
 export function validateStoryData(story) {
   var errors = [];
-  var fields = ["title", "desc"];
+  var fields = ["tytul", "opis"];
   for (let field of fields) {
     if (!story.hasOwnProperty(field)) errors.push(`Missing field '${field}'`);
     else {

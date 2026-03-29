@@ -1,29 +1,29 @@
 <form action="/add_story/<%=storyset.slug%>" method="POST">
   <div>
-    <label for="story_title">Tytuł</label>
+    <label for="story_tytul">Tytuł</label>
     <input
       type="text"
-      name="title"
-      id="story_title"
+      name="tytul"
+      id="story_tytul"
       required
       minlength="1"
       maxlength="500"
-      <% if (locals.title){ %>
-      value="<%= title %>"
+      <% if (locals.tytul){ %>
+      value="<%= tytul %>"
       <% }%>
     />
   </div>
   <div>
-    <label for="story_desc">Opis</label>
+    <label for="story_opis">Opis</label>
     <textarea
       type="text"
-      name="desc"
-      id="story_desc"
+      name="opis"
+      id="story_opis"
       required
       minlength="1"
       maxlength="500"
-      <% if (locals.desc){ %>
-      value="<%= desc %>"
+      <% if (locals.opis){ %>
+      value="<%= opis %>"
       <% }%>
       >
       </textarea>

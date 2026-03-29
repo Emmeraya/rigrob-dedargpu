@@ -1,1 +1,2 @@
-logowanie zrobione to teraz trzeba od tego resztę uzależnić
+naprawić problem z pepper env missing
+odpalić i przetestować kod
