@@ -1,7 +1,10 @@
 <%- include("head.partial.ejs") %>
 <main>
   <h1><%= title %></h1>
+  <div class="storyset-author">Autor: <%= storyset.author.username %></div>
+  <% if (storyset.editableBy(user)) { %>
   <a href="/edit/<%= storyset.slug %>" class="action-link">Edytuj katergorię</a>
+   <% } %>
   <% if (storyset.stories && storyset.stories.length > 0) { %>
     <ul id="stories">
       <% storyset.stories.forEach(function(story){ %>
@@ -14,10 +17,12 @@
   <% } else { %>
     <p>W tym zestawie nie ma żadnych historyjek. Dodaj nowe poniżej.</p>
   <% } %>
+  <% if (storyset.editableBy(user)) { %>
   <div>
     <h3>Nowa Historyjka</h3>
     <%- include("forms/new_story.ejs") %>
   </div>
+  <% } %>
 </main>
 
 <%- include("foot.partial.ejs") %>

@@ -6,19 +6,19 @@ const storysets = {
   "fantasy": {
     name: "fantasy",
     stories: [
-      {title: "Miau", desc: "mia mia mia mia mia"},
-      {title: "Miau", desc: "mia mia mia mia mia1"},
-      {title: "Miau", desc: "mia mia mia mia mia2"},
-      {title: "Miau", desc: "mia mia mia mia mia3"},
+      {tytul: "Miau", opis: "mia mia mia mia mia"},
+      {tytul: "Miau", opis: "mia mia mia mia mia1"},
+      {tytul: "Miau", opis: "mia mia mia mia mia2"},
+      {tytul: "Miau", opis: "mia mia mia mia mia3"},
     ],
   },
   "science-fiction": {
     name: "science fiction",
     stories: [
-      {title: "Miau1", desc: "mia mia mia mia mia"},
-      {title: "Miau2", desc: "mia mia mia mia mia2"},
-      {title: "Miau3", desc: "mia mia mia mia mia3"},
-      {title: "Miau4", desc: "mia mia mia mia mia4"},
+      {tytul: "Miau1", opis: "mia mia mia mia mia"},
+      {tytul: "Miau2", opis: "mia mia mia mia mia2"},
+      {tytul: "Miau3", opis: "mia mia mia mia mia3"},
+      {tytul: "Miau4", opis: "mia mia mia mia mia4"},
     ],
   },
 };

@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch --env-file .env ./index.js",
-    "populate_db": "node utils/populate_db.js",
+    "populate_db": "node --env-file .env utils/populate_db.js",
     "generate_env": "./utils/generate_env.sh > .env"
   },
   "author": "",

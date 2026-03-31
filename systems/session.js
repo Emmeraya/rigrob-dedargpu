@@ -19,7 +19,7 @@ db.exec(`
 
 const db_ops = {
   create_session: db.prepare(
-    "INSERT INTO session (id, user_id, csrf_token, created_at) VALUES (?, ?, ?) RETURNING id, user_id, created_at, csrf_token;",
+    "INSERT INTO session (id, user_id, csrf_token, created_at) VALUES (?, ?, ?, ?) RETURNING id, user_id, created_at, csrf_token;",
   ),
   get_session: db.prepare(
     "SELECT id, user_id, csrf_token, created_at from session WHERE id = ?;",
