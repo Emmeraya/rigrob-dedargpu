@@ -7,7 +7,7 @@ html {
     --banner-background: #efe;
     --button-background: #dba;
     --text-color-normal: #222;
-    --text-color-link: #44e;
+    --text-color-link: rgb(27, 27, 167);
     background-color: var(--backdrop);
     color: var(--text-color-normal);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -17,11 +17,11 @@ html {
 html[data-theme='dark'] {
     --backdrop: rgb(32, 7, 1);
     background-image: url("cheese_v2.png");
-    --background: #5007079f;
+    --background: #442212b6;
     --banner-background: #3a28287c;
     --button-background: rgb(63, 36, 36);
     --text-color-normal: #ddd;
-    --text-color-link: rgb(41, 41, 202);
+    --text-color-link: rgb(25, 119, 207);
 }
 
 body {
@@ -32,6 +32,7 @@ body {
 
 .container {
     background-color: var(--background);
+    padding: 15px;
     width: 70rem;
     border-radius: 0.5rem;
 }
@@ -80,6 +81,15 @@ a:visited {
 
 .story-action {
     display: inline;
+}S
+
+.storyset-author{
+  text-align: center;
+  padding-right: 50px;
+}
+
+.story-title{
+  padding-right: 40px;
 }
 
 .cookie-container {
