@@ -16,6 +16,7 @@
         <li>
           <%- include("forms/edit_story.ejs", {story, storyset}) %>
           <form class="story-action" action="/delete/<%= storyset.slug %>/<%= story.id %>" method="POST">
+            <input type="hidden" name="csrf_token" id="form_csrf_token" value="<%-session.csrf_token%>">
             <button>Usuń</button>
           </form>
         </li>

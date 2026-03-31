@@ -28,6 +28,9 @@ export async function signup_post(req, res) {
     form.action = `/auth/signup?next=${encodeURIComponent(nextUrl)}`;
   }
   form.errors = validateForm(form.data, form.fields);
+  if (req.body.csrf_token !== res.locals.session.csrf_token) {
+    form.errors["form"] = "Błąd walidacji CSRF";
+  }
 
   if (Object.entries(form.errors).length == 0) {
     let user = await createUser(form.data["username"], form.data["password"]);
@@ -70,6 +73,9 @@ export async function login_post(req, res) {
     form.action = `/auth/login?next=${encodeURIComponent(nextUrl)}`;
   }
   form.errors = validateForm(form.data, form.fields);
+  if (req.body.csrf_token !== res.locals.session.csrf_token) {
+    form.errors["form"] = "Błąd walidacji CSRF";
+  }
 
   if (Object.entries(form.errors).length == 0) {
     let user_id = await validatePassword(

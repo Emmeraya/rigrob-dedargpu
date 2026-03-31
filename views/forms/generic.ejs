@@ -26,6 +26,7 @@
     </div>
   </div>
   <% }) %>
+  <input type="hidden" name="csrf_token" id="form_csrf_token" value="<%-session.csrf_token%>">
   <div class="form-row">
     <label></label>
     <button class="submit-button"><%=  locals.submit_text || "Wyślij" %></button>

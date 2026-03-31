@@ -8,31 +8,36 @@ const db = new DatabaseSync(db_path, { readBigInts: true });
 const SESSION_COOKIE = "__Host-story-id";
 const ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
 
-// TODO(kleindan) no user model yet
-// remember to add Foreign Key relations later
 db.exec(`
   CREATE TABLE IF NOT EXISTS session (
     id              INTEGER PRIMARY KEY,
     user_id         INTEGER,
+    csrf_token      TEXT NOT NULL,
     created_at      INTEGER
   ) STRICT;
   `);
 
 const db_ops = {
   create_session: db.prepare(
-    "INSERT INTO session (id, user_id, created_at) VALUES (?, ?, ?) RETURNING id, user_id, created_at;",
+    "INSERT INTO session (id, user_id, csrf_token, created_at) VALUES (?, ?, ?) RETURNING id, user_id, created_at, csrf_token;",
   ),
   get_session: db.prepare(
-    "SELECT id, user_id, created_at from session WHERE id = ?;",
+    "SELECT id, user_id, csrf_token, created_at from session WHERE id = ?;",
   ),
   delete_session: db.prepare("DELETE FROM session WHERE id = ?;"),
 };
 
 export function createSession(user_id, res) {
   let sessionId = randomBytes(8).readBigInt64BE();
+  let csrfToken = randomBytes(24).toString("base64");
   let createdAt = Date.now();
 
-  let session = db_ops.create_session.get(sessionId, user_id, createdAt);
+  let session = db_ops.create_session.get(
+    sessionId,
+    user_id,
+    csrfToken,
+    createdAt,
+  );
   res.locals.session = session;
   res.locals.user = session.user_id != null ? getUser(session.user_id) : null;
 
@@ -49,14 +54,12 @@ function sessionHandler(req, res, next) {
   let session = null;
   if (sessionId != null) {
     if (!sessionId.match(/^-?[0-9]+$/)) {
-      // Invalid session id
       sessionId = null;
     } else {
       sessionId = BigInt(sessionId);
     }
   }
 
-  // sessionId may look valid but might not exist in db
   if (sessionId != null) session = db_ops.get_session.get(sessionId);
 
   if (session != null) {
