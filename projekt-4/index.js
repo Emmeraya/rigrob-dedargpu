@@ -131,7 +131,7 @@ app.get("/add_story/:storyset_slug", auth.login_required, (req, res) => {
 
 app.get("/new_storyset", auth.login_required, (req, res) => {
   res.render("storyset_new", {
-    title: "Nowy zestaw",
+    title: "Nowy zestaw historyjek",
   });
 });
 
@@ -280,5 +280,6 @@ app.post("/edit/:storyset_slug/:story_id", auth.login_required, (req, res) => {
 });
 
 app.listen(port, () => {
+  console.log("\nRemeber.\nThis site is a joke and should be thought of as one.\n");
   console.log(`Server listening on http://localhost:${port}`);
 });

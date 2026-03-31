@@ -6,4 +6,4 @@
 # npm run generate_env
 # npm run populate_db
 # npm run dev
-# more specifics(add in)
+# more specifics(fguture add in)

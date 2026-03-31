@@ -1,6 +1,7 @@
 html {
     --background: rgba(221, 238, 221, 0.466);
-    background-image: url("cheeseburger.png");
+    --background-img:url("cheeseburger.png");
+    background-image: var(--background-img);
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size:cover;
@@ -16,7 +17,8 @@ html {
 
 html[data-theme='dark'] {
     --backdrop: rgb(32, 7, 1);
-    background-image: url("cheese_v2.png");
+    --background-img:url("cheese_v2.png");
+    background-image: var(--background-img);
     --background: #442212b6;
     --banner-background: #3a28287c;
     --button-background: rgb(63, 36, 36);
