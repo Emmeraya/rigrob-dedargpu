@@ -1,4 +1,4 @@
-# Instalaja Aplikacji
+# Instalaja Aplikacji:
 # npm install express
 # npm install morgan
 # npm install argon2
@@ -6,6 +6,8 @@
 # npm run generate_env
 # npm run populate_db
 # npm run dev
-# konto admin: login: Admin hasło: changeme
-# konto admin: login: Student hasło: changeme
-# more specifics(fguture add in)
+# konto admin: 
+# login: Admin hasło: changeme
+# konto admin: 
+# login: Student hasło: changeme
+# more specifics(future add in)
