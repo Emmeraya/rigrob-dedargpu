@@ -8,6 +8,6 @@
 # npm run dev
 # konto admin: 
 # login: Admin hasło: changeme
-# konto admin: 
+# konto Student: 
 # login: Student hasło: changeme
 # more specifics(future add in)
