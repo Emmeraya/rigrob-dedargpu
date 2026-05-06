@@ -126,13 +126,16 @@ export function validateStoryData(story) {
       if (typeof story[field] != "string")
         errors.push(`'${field}' expected to be string`);
       else {
-        if (story[field].length < 1 || story[field].length > 500)
-          errors.push(`'${field}' expected length: 1-500`);
+        if (story["tytul"].length < 1 || story["tytul"].length > 500)
+          errors.push(`tytul expected length: 1-500`);
+        if (story["opis"].length < 1 || story["opis"].length > 2000)
+          errors.push(`opis expected length: 1-2000`);
       }
     }
   }
   return errors;
 }
+
 export function validateStorysetName(name) {
   var errors = [];
   if (typeof name != "string") {

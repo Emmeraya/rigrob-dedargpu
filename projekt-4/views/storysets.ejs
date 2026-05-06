@@ -2,15 +2,6 @@
 
 <main>
   <h1><%= title %></h1>
-  <% if (last_viewed_storysets?.length > 0) { %>
-  <h2>Ostatnio przeglądane</h2>
-  <ul id="recently_viewed">
-    <% last_viewed_storysets.forEach(function(storyset){ %>
-    <li><a href="/view/<%= storyset.slug %>"><%= storyset.name %></a></li>
-    <% }) %>
-  </ul>
-  <h2>Wszystkie</h2>
-  <% } /* (last_viewed_storysets.length > 0) */ %>
   <ul id="storysets">
     <% storysets.forEach(function(storyset){ %>
     <li><a href="/view/<%= storyset.slug %>"><%= storyset.name %></a></li>
