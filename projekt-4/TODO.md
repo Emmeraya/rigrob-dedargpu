@@ -5,3 +5,11 @@ zaijanie opisu pod tytuł dla historyjek
 add rgb lights mode(DISCOO)
 add autoplaying music in the background
 dodać 2 wersje językowe (polski, englisz)
+
+
+
+ładniej opisać readme
+składnia markdown???
+możliwość oglądania pojedyńczej historyjki
+dodać błąd po nie udanej autoryzacji by było wiadomo co jest nie tak\
+interfejs zmienić
