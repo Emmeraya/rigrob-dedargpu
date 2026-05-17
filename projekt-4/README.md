@@ -1,7 +1,10 @@
+**Strona do tworzenia krótkich historyjek**
+
 # Instalaja Aplikacji:
 npm install
 # npm run generate_env
-# npm run populate_db
+# Dane testowe do bazy danych:
+npm run db_fill
 # Odpalanie Aplikacji:
 npm run dev
 # konto admin: 

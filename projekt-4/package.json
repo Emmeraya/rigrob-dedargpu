@@ -1,12 +1,12 @@
 {
   "name": "express-stories",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "dev": "node --watch --env-file .env ./index.js",
-    "populate_db": "node --env-file .env utils/populate_db.js",
+    "db_fill": "node --env-file .env utils/db_fill.js",
     "generate_env": "./utils/generate_env.sh > .env"
   },
   "author": "",
