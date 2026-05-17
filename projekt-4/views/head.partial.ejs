@@ -31,7 +31,7 @@
       <section class="controls">
         <% if (!page.startsWith("/auth/")) { %> 
           <% if (user) { %>
-            <span>Hello <%= user.username %></span>
+            <span><%= user.username %></span>
             <a href="/auth/logout">Wyloguj się</a>
           <% } else { %>
             <a href="/auth/login">Zaloguj się</a>
