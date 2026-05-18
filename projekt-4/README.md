@@ -1,14 +1,19 @@
-**Strona do tworzenia krótkich historyjek**
+# Strona do tworzenia krótkich historyjek
 
-# Instalaja Aplikacji:
+**Instalaja Aplikacji:**
 npm install
-# npm run generate_env
-# Dane testowe do bazy danych:
+
+**npm run generate_env**
+
+**Dane testowe do bazy danych:**
 npm run db_fill
-# Odpalanie Aplikacji:
+
+**Odpalanie Aplikacji:**
 npm run dev
-# konto admin: 
+
+**konto admin: **
 login: Admin hasło: changeme
-# konto Student: 
+
+**konto Student: **
 login: Student hasło: changeme
 

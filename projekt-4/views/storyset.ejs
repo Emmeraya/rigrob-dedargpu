@@ -9,8 +9,7 @@
     <ul id="stories">
       <% storyset.stories.forEach(function(story){ %>
       <li>
-        <b><h2 class="story-title"><%= story.tytul %></h2></b> 
-        <%= story.opis %>
+        <b><h2 class="story-title"><a href="/view/<%= storyset.slug %>/<%=story.id>"> <%=story.tytul%></a></h2></b>
       </li>
       <% }) %>
     </ul>
