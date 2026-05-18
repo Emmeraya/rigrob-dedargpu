@@ -64,8 +64,9 @@ app.get("/", (req, res) => {
 
 app.get("/view/:storyset_slug", (req, res) => {
   const storyset = stories.getStoryset(req.params.storyset_slug);
-  storyset.author =user.getUser(storyset.author_id);
+  
   if (storyset != null) {
+    storyset.author =user.getUser(storyset.author_id);
     if (res.locals.app.cookie_consent) {
       let last_viewed_dirty = req.signedCookies[LAST_VIEWED_COOKIE] || [];
       let last_viewed = [
@@ -111,7 +112,7 @@ app.post("/add_story/:storyset_slug", auth.login_required, (req, res) => {
         res.redirect(`/view/${storyset_slug}`);
       } else {
         res.status(400);
-        res.render("new_story", {
+        res.render("story_new", {
           errors,
           title: "Nowa historyjka",
           tytul: req.body.tytul,
@@ -126,12 +127,47 @@ app.post("/add_story/:storyset_slug", auth.login_required, (req, res) => {
 });
 
 app.get("/add_story/:storyset_slug", auth.login_required, (req, res) => {
-  res.redirect(`/view/${req.params.storyset_slug}`);
+  const storyset_slug = req.params.storyset_slug;
+  if (!stories.hasStoryset(storyset_slug)) {
+    return res.sendStatus(404);
+  }
+  if (!stories.canEdit(storyset_slug, res.locals.user)) {
+    return res.redirect("/");
+  }
+  res.render("story_new", {
+    errors: [],
+    title: "Nowa historyjka",
+    tytul: "",
+    opis: "",
+    storyset: {
+      id: storyset_slug,
+    },
+  });
 });
 
 app.get("/new_storyset", auth.login_required, (req, res) => {
   res.render("storyset_new", {
     title: "Nowy zestaw historyjek",
+  });
+});
+app.get("/view/:storyset_slug/:story_id", (req, res) => {
+  const storyset = stories.getStoryset(req.params.storyset_slug);
+  if (storyset == null) {
+    return res.sendStatus(404);
+  }
+  storyset.author = user.getUser(storyset.author_id);
+  const storyId = parseInt(req.params.story_id, 10);
+  if (isNaN(storyId)) {
+    return res.sendStatus(404);
+  }
+  const story = storyset.stories.find((story) => story.id === storyId);
+  if (story == null) {
+    return res.sendStatus(404);
+  }
+  res.render("story", {
+    title: story.tytul,
+    storyset,
+    story,
   });
 });
 
@@ -273,6 +309,19 @@ app.post("/delete/:storyset_slug/:story_id", auth.login_required, (req, res) => 
       res.redirect(`/edit/${storyset_slug}`);
     }
   }
+});
+
+app.post("/delete/:storyset_slug", auth.login_required, (req, res) => {
+  const storyset_slug = req.params.storyset_slug;
+  if (!stories.hasStoryset(storyset_slug)) {
+    return res.sendStatus(404);
+  }
+  if (!stories.canEdit(storyset_slug, res.locals.user)) {
+    res.status(401);
+    return res.redirect("/");
+  }
+  stories.deleteStoryset(storyset_slug);
+  res.redirect("/");
 });
 
 app.post("/edit/:storyset_slug/:story_id", auth.login_required, (req, res) => {

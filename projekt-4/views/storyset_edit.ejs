@@ -26,7 +26,82 @@
       <p>W tym zestawie nie ma żadnych historyjek. Dodaj nowe poniżej.</p>
     <% } %>
   </div>
+  <section>
+    <h2>Usuwanie kategorii</h2>
+    <p>Usunięcie kategorii spowoduje usunięcie całego zestawu: <strong><%= storyset.name %></strong></p>
+    <button type="button" id="open-delete-storyset-dialog"> Usuń kategorię</button>
+    <form
+      id="delete-storyset-form" action="/delete/<%= storyset.slug %>" method="POST" style="display: none;">
+      <input type="hidden" name="csrf_token" value="<%- session.csrf_token %>">
+    </form>
+  </section>
+
+  <dialog id="delete-storyset-dialog">
+    <h2 id="delete-dialog-title">Ostrzeżenie</h2>
+    <p id="delete-dialog-text"></p>
+    <p id="delete-dialog-extra" style="display: none;"> Jeżeli skala dramatu przekracza usunięcie kategorii, tu jest pomoc: <a href="https://infolinia.info.pl/infolinia-dla-samobojcow/" target="_blank" rel="noopener noreferrer">infolinia wsparcia </a></p>
+    <div>
+      <button type="button" id="cancel-delete-storyset">Anuluj</button>
+      <button type="button" id="next-delete-warning">Dalej</button>
+    </div>
+  </dialog>
+  <script>
+    const deleteWarnings = [
+      {title: "Ostrzeżenie 1",text: "Do you want to delete this storyset?"},
+      {title: "Ostrzeżenie 2",text: "Are you, really sure? Like really, really?"},
+      {title: "Ostrzeżenie 3",text: "Hey, my dear user, you know that this decision cannot be reversed, right? So are you really sure?"},
+      {title: "Ostrzeżenie 4",text: "This storyset has a life, a family and a blooming career, do you really want to take everything away from them?"},
+      {title: "Ostrzeżenie 5",text: "MONSTER! Is thy really as cold hearted as you appear? To take away the life of an innocent little storyset, what had it done to you??? ARE YOU SURE YOU WANT TO MAKE THIS HORRIBLE AND TERRYFING DECISION? Are you sure you want to delete this storyset, monster?."}
+    ];
+    let currentDeleteWarning = 0;
+    const dialog = document.getElementById("delete-storyset-dialog");
+    const dialogTitle = document.getElementById("delete-dialog-title");
+    const dialogText = document.getElementById("delete-dialog-text");
+    const dialogExtra = document.getElementById("delete-dialog-extra");
+
+    const openButton = document.getElementById("open-delete-storyset-dialog");
+    const cancelButton = document.getElementById("cancel-delete-storyset");
+    const nextButton = document.getElementById("next-delete-warning");
+    const deleteForm = document.getElementById("delete-storyset-form");
+
+    function showDeleteWarning(index) {
+      const warning = deleteWarnings[index];
+
+      dialogTitle.textContent = warning.title;
+      dialogText.textContent = warning.text;
+
+      if (index === deleteWarnings.length - 1) {
+        dialogExtra.style.display = "block";
+        nextButton.textContent = "Tak, usuń kategorię";
+      } else {
+        dialogExtra.style.display = "none";
+        nextButton.textContent = "Dalej";
+      }
+    }
+
+    openButton.addEventListener("click", function () {
+      currentDeleteWarning = 0;
+      showDeleteWarning(currentDeleteWarning);
+      dialog.showModal();
+    });
+
+    cancelButton.addEventListener("click", function () {
+      dialog.close();
+    });
+
+    nextButton.addEventListener("click", function () {
+      if (currentDeleteWarning < deleteWarnings.length - 1) {
+        currentDeleteWarning++;
+        showDeleteWarning(currentDeleteWarning);
+        return;
+      }
+
+      deleteForm.submit();
+    });
+  </script>
   <a href="/view/<%= storyset.slug %>">Powrót</a>
 </main>
 
 <%- include("foot.partial.ejs") %>
+
+

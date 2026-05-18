@@ -49,6 +49,15 @@ const db_ops = {
     "UPDATE stories SET tytul = ?, opis = ? WHERE story_id = ? RETURNING story_id, tytul, opis;",
   ),
   delete_story_by_id: db.prepare("DELETE FROM stories WHERE story_id = ?;"),
+  delete_stories_by_storyset_slug: db.prepare(
+  `DELETE FROM stories
+   WHERE storyset_id = (
+     SELECT storyset_id FROM storysets WHERE slug = ?
+   );`,
+  ),
+  delete_storyset_by_slug: db.prepare(
+  "DELETE FROM storysets WHERE slug = ?;",
+  ),
   get_stories_by_storyset_id: db.prepare(
     "SELECT story_id AS id, tytul, opis FROM stories WHERE storyset_id = ?;",
   ),
@@ -103,6 +112,11 @@ export function updateStory(story) {
 
 export function deleteStoryById(StoryId) {
   return db_ops.delete_story_by_id.run(StoryId);
+}
+
+export function deleteStoryset(storysetSlug) {
+  db_ops.delete_stories_by_storyset_slug.run(storysetSlug);
+  return db_ops.delete_storyset_by_slug.run(storysetSlug);
 }
 
 export function addStoryset(slug, name, author) {
@@ -174,6 +188,7 @@ export default {
   addStory,
   updateStory,
   deleteStoryById,
+  deleteStoryset,
   addStoryset,
   updateStoryset,
   validateStoryData,
