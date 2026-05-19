@@ -23,9 +23,15 @@
       <header>
         
       <nav>
-        <% if (page !== "/") { %>
-        <a href="/">Powrót do listy zestawów</a>
-        <% } %>
+          <% if (page !== "/") { %>
+            <% if (typeof story !== "undefined" && story && typeof storyset !== "undefined" && storyset) { %>
+              <a href="/view/<%= storyset.slug %>">Powrót do zestawu historyjek</a>
+            <% } else if (typeof storyset !== "undefined" && storyset) { %>
+              <a href="/">Powrót do listy zestawów</a>
+            <% } else { %>
+              <a href="/">Powrót do listy zestawów</a>
+            <% } %>
+          <% } %>
       </nav>
       <section class="controls">
         <% if (!page.startsWith("/auth/")) { %> 

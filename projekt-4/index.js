@@ -260,6 +260,37 @@ app.post("/edit/:storyset_slug", auth.login_required, (req, res) => {
   }
 });
 
+app.get("/edit/:storyset_slug/:story_id", auth.login_required, (req, res) => {
+  const storyset_slug = req.params.storyset_slug;
+  const story_id = parseInt(req.params.story_id, 10);
+
+  const storyset = stories.getStoryset(storyset_slug);
+
+  if (storyset == null || isNaN(story_id)) {
+    return res.sendStatus(404);
+  }
+
+  if (!storyset.editableBy(res.locals.user)) {
+    res.status(401);
+    return res.redirect("/");
+  }
+
+  storyset.author = user.getUser(storyset.author_id);
+
+  const story = storyset.stories.find((story) => story.id === story_id);
+
+  if (story == null) {
+    return res.sendStatus(404);
+  }
+
+  res.render("story_edit", {
+    errors: [],
+    title: "Edycja historii",
+    storyset,
+    story,
+  });
+});
+
 app.post("/edit/:storyset_slug/:story_id", auth.login_required, (req, res) => {
   const storyset_slug = req.params.storyset_slug;
   const story_id = req.params.story_id;
@@ -278,7 +309,7 @@ app.post("/edit/:storyset_slug/:story_id", auth.login_required, (req, res) => {
       const errors = stories.validateStoryData(story);
       if (errors.length == 0) {
         stories.updateStory(story);
-        res.redirect(`/edit/${storyset_slug}`);
+        res.redirect(`/view/${storyset_slug}/${story_id}`);
       } else {
         let storyset = stories.getStoryset(storyset_slug);
         res.render("storyset_edit", {
@@ -289,10 +320,6 @@ app.post("/edit/:storyset_slug/:story_id", auth.login_required, (req, res) => {
       }
     }
   }
-});
-
-app.post("/edit/:storyset_slug/:story_id", auth.login_required, (req, res) => {
-  res.redirect(`/edit/${req.params.storyset_slug}`);
 });
 
 app.post("/delete/:storyset_slug/:story_id", auth.login_required, (req, res) => {

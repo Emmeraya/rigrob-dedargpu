@@ -1,15 +1,34 @@
-
-          
 <%- include("head.partial.ejs") %>
+
 <main>
-    <h1><%= title %></h1>
-    <div class="storyset-author">Autor: <%= storyset.author.username %></div>
-    <% if (storyset.editableBy(user)) { %>
-    <a href="/edit/<%= storyset.slug %>/<%= story.id %>" class="action-link">Edytuj historię</a>
-    <%- include("forms/edit_story.ejs", {story, storyset}) %>
+  <h1><%= title %></h1>
+
+  <div class="storyset-author">Autor: <%= storyset.author.username %></div>
+
+  <% if (errors && errors.length > 0) { %>
+    <ul class="errors">
+      <% errors.forEach((error) => { %>
+        <li><%= error %></li>
+      <% }) %>
+    </ul>
+  <% } %>
+
+  <% if (storyset.editableBy(user)) { %>
+    <%- include("forms/edit_story.ejs", { story, storyset }) %>
+
     <form class="story-action" action="/delete/<%= storyset.slug %>/<%= story.id %>" method="POST">
-    <input type="hidden" name="csrf_token" id="form_csrf_token" value="<%-session.csrf_token%>">
-    <button>Usuń</button>
+      <input type="hidden" name="csrf_token" id="form_csrf_token" value="<%- session.csrf_token %>">
+      <button>Usuń</button>
     </form>
+  <% } %>
+
+  <p>
+    <a href="/view/<%= storyset.slug %>/<%= story.id %>">Wróć do historii</a>
+  </p>
+
+  <p>
+    <a href="/view/<%= storyset.slug %>">Wróć do zestawu</a>
+  </p>
 </main>
+
 <%- include("foot.partial.ejs") %>
