@@ -10,21 +10,6 @@
     </ul>
     <% } %>
     <%- include("forms/edit_storyset.ejs") %>
-    <% if (locals.storyset.stories && locals.storyset.stories.length > 0) { %>
-      <ul id="stories">
-        <% storyset.stories.forEach(function(story){ %>
-        <li>
-          <%- include("forms/edit_story.ejs", {story, storyset}) %>
-          <form class="story-action" action="/delete/<%= storyset.slug %>/<%= story.id %>" method="POST">
-            <input type="hidden" name="csrf_token" id="form_csrf_token" value="<%-session.csrf_token%>">
-            <button>Usuń</button>
-          </form>
-        </li>
-        <% }) %>
-      </ul>
-    <% } else { %>
-      <p>W tym zestawie nie ma żadnych historyjek. Dodaj nowe poniżej.</p>
-    <% } %>
   </div>
   <section>
     <h2>Usuwanie kategorii</h2>

@@ -1,0 +1,15 @@
+
+          
+<%- include("head.partial.ejs") %>
+<main>
+    <h1><%= title %></h1>
+    <div class="storyset-author">Autor: <%= storyset.author.username %></div>
+    <% if (storyset.editableBy(user)) { %>
+    <a href="/edit/<%= storyset.slug %>/<%= story.id %>" class="action-link">Edytuj historię</a>
+    <%- include("forms/edit_story.ejs", {story, storyset}) %>
+    <form class="story-action" action="/delete/<%= storyset.slug %>/<%= story.id %>" method="POST">
+    <input type="hidden" name="csrf_token" id="form_csrf_token" value="<%-session.csrf_token%>">
+    <button>Usuń</button>
+    </form>
+</main>
+<%- include("foot.partial.ejs") %>

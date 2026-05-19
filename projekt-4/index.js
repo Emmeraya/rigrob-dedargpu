@@ -118,7 +118,7 @@ app.post("/add_story/:storyset_slug", auth.login_required, (req, res) => {
           tytul: req.body.tytul,
           opis: req.body.opis,
           storyset: {
-            id: storyset_slug,
+            slug: storyset_slug,
           },
         });
       }
@@ -140,7 +140,7 @@ app.get("/add_story/:storyset_slug", auth.login_required, (req, res) => {
     tytul: "",
     opis: "",
     storyset: {
-      id: storyset_slug,
+      slug: storyset_slug,
     },
   });
 });

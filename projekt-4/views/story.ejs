@@ -5,9 +5,7 @@
   <% if (storyset.editableBy(user)) { %>
   <a href="/edit/<%= storyset.slug %>/<%= story.id %>" class="action-link">Edytuj historię</a>
    <% } %><br><br>
-  <%= story.opis %>
-
+  <p><%= story.opis %></p>
 
 </main>
-
 <%- include("foot.partial.ejs") %>
