@@ -9,16 +9,21 @@
   </head>
   <body>
     <div class="container">
+      <audio id="disco-audio" src="/OIIAIOIIIAI.mp3" loop preload="auto"></audio>
+      
       <div class="settings">
         <section class="controls">
           <a href="/settings/toggle-theme?next=<%- encodeURIComponent(page) %>">
             <% if (app.theme === "dark") { %>
-            <strong>Ciemny</strong> | Jasny
+              Jasny | <strong>Ciemny</strong> | Discoo 
+            <% } else if (app.theme === "discoo") { %>
+              Jasny | Ciemny | <strong>Discoo</strong>
             <% } else { %>
-            Ciemny | <strong>Jasny</strong>
+              <strong>Jasny</strong> | Ciemny | Discoo
             <% } %>
           </a>
         </section>
+        <button id="disco-play-button" type="button" hidden>Włącz disco</button>
       </div>
       <header>
         

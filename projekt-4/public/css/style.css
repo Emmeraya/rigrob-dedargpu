@@ -8,22 +8,31 @@ html {
     --banner-background: #efe;
     --button-background: #dba;
     --text-color-normal: #222;
-    --text-color-link: rgb(27, 27, 167);
+    --text-color-link: rgb(6, 6, 43);
     background-color: var(--backdrop);
     color: var(--text-color-normal);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 12pt;
+    font-size: 11pt;
 }
 
 html[data-theme='dark'] {
     --backdrop: rgb(32, 7, 1);
     --background-img:url("cheese_v2.png");
-    background-image: var(--background-img);
     --background: #311609d3;
     --banner-background: #3a28287c;
     --button-background: rgb(63, 36, 36);
     --text-color-normal: #ddd;
-    --text-color-link: rgb(25, 119, 207);
+    --text-color-link: rgb(102, 154, 202);
+}
+
+html[data-theme='discoo'] {
+    --backdrop: rgb(209, 8, 159);
+    --background-img:url("cheeseburgit_v3.jpg");
+    --background: #d3003fd3;
+    --banner-background: #8a293e7c;
+    --button-background: rgb(83, 17, 34);
+    --text-color-normal: #47c8fc;
+    --text-color-link: rgb(0, 217, 255);
 }
 
 body {
@@ -84,7 +93,7 @@ a:visited {
 
 .story-action {
     display: inline;
-}S
+}
 
 .storyset-author{
   text-align: center;

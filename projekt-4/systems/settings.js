@@ -7,15 +7,23 @@ const CONSENT_COOKIE = "__Host-story-consent";
 const CONSENT_PARAMS = { maxAge: ONE_MONTH, secure: true, httpOnly: true };
 
 export function themeToggle(req, res) {
-  var theme = req.cookies[THEME_COOKIE];
-  if (theme === "dark") {
-    theme = "light";
-  } else {
-    theme = "dark";
-  }
-  res.cookie(THEME_COOKIE, theme, { maxAge: ONE_MONTH, secure: true });
+  const themes = ["light", "dark", "discoo"];
 
-  var next = req.query.next || "/";
+  let currentTheme = req.cookies[THEME_COOKIE] || "light";
+  let currentIndex = themes.indexOf(currentTheme);
+
+  if (currentIndex === -1) {
+    currentIndex = 0;
+  }
+
+  const nextTheme = themes[(currentIndex + 1) % themes.length];
+
+  res.cookie(THEME_COOKIE, nextTheme, {
+    maxAge: ONE_MONTH,
+    secure: true,
+  });
+
+  const next = req.query.next || "/";
   res.redirect(next);
 }
 
