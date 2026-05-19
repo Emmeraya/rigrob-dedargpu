@@ -35,6 +35,13 @@ html[data-theme='discoo'] {
     --text-color-link: rgb(0, 217, 255);
 }
 
+.disco{
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  object-fit: cover;
+  opacity: 0.35;
+}
 body {
     display: flex;
     justify-content: center;
