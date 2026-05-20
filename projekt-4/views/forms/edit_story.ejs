@@ -3,5 +3,6 @@
     <br>
     <textarea type="text" name="opis" id="story-<%= story.id %>-opis" required minlength="1" maxlength="2000"><%= story.opis %> </textarea>
     <input type="hidden" name="csrf_token" id="form_csrf_token" value="<%-session.csrf_token%>">
+    <br>
     <button>Zapisz</button>
 </form>
