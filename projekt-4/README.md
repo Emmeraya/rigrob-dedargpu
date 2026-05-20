@@ -3,7 +3,8 @@
 **Instalaja Aplikacji:**
 npm install
 
-**npm run generate_env**
+**generowanie zabezpieczeń(potrzebne)**
+npm run generate_env
 
 **Dane testowe do bazy danych:**
 npm run db_fill
@@ -12,8 +13,8 @@ npm run db_fill
 npm run dev
 
 **konto admin: **
-login: Admin hasło: changeme
+login: admin hasło: changeme
 
 **konto Student: **
-login: Student hasło: changeme
+login: student hasło: changeme
 
