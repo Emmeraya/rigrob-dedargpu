@@ -1,3 +1,4 @@
+import "./user.js";
 import { DatabaseSync } from "node:sqlite";
 
 const db_path = "./db.sqlite";

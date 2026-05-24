@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "node --watch --env-file .env ./index.js",
     "db_fill": "node --env-file .env utils/db_fill.js",
+    "create_admin": "node --env-file .env utils/create_admin.js",
     "generate_env": "./utils/generate_env.sh > .env"
   },
   "author": "",

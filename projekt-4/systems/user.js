@@ -70,12 +70,19 @@ export async function validatePassword(username, password) {
 }
 
 export function getUser(userId) {
-  let { id, username, attributes, created_at } = db_ops.get_user.get(userId);
+  if (userId == null) {
+    return null;
+  }
+  let row = db_ops.get_user.get(userId);
+  if (row == null) {
+    return null;
+  }
+  let { id, username, attributes, created_at } = row;
   return {
     id,
     username,
     created_at,
-    ...JSON.parse(attributes),
+    ...(attributes != null ? JSON.parse(attributes) : {}),
   };
 }
 
@@ -113,10 +120,14 @@ export function addAttribute(userId, name, value) {
   return null;
 }
 
+export function findByUsername(username) {
+  return db_ops.find_by_username.get(username);
+}
 
 export default {
   createUser,
   validatePassword,
   getUser,
   addAttribute,
+  findByUsername,
 };

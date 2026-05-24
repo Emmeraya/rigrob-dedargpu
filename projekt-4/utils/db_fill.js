@@ -1,7 +1,6 @@
 import user from "../systems/user.js";
 import stories from "../systems/stories.js";
 
-
 const storysets = {
   "fantasy": {
     name: "fantasy",
@@ -26,19 +25,17 @@ const storysets = {
 
 console.log("Populating db...");
 
-let admin = await user.createUser("admin", "changeme");
-let errMsg = user.addAttribute(admin.id, "is_admin", true);
-if (errMsg) {
-  console.error(errMsg);
-}
-
 let student = await user.createUser("student", "changeme");
 
-Object.entries(storysets).map(([slug, data]) => {
+for (let [slug, data] of Object.entries(storysets)) {
+  if (stories.hasStoryset(slug)) {
+    console.log(`Storyset '${slug}' already exists. Skipping.`);
+    continue;
+  }
   let storyset = stories.addStoryset(slug, data.name, student);
   for (let story of data.stories) {
-    let s = stories.addStory(storyset.slug, story);
+    stories.addStory(storyset.slug, story);
   }
-});
+}
 
 console.log("Done!");

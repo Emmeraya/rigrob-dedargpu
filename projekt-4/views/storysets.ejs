@@ -1,15 +1,23 @@
 <%- include("head.partial.ejs") %>
 
 <main>
-  <h1><%= title %></h1>
-  <ul id="storysets">
-    <% storysets.forEach(function(storyset){ %>
-    <li><a href="/view/<%= storyset.slug %>"><%= storyset.name %></a></li>
-    <% }) %>
-  </ul>
-  <% if (user != null) { %>
-  <a href="/new_storyset">Dodaj nowy zestaw historyjek</a>
-  <% } %>
+  <% if (storysets.length === 0) { %>
+    <p>Brak zestawów historyjek.</p>
+    <% if (user == null) { %>
+      <p>Aby dodać pierwszy zestaw, zarejestruj się albo zaloguj.</p>
+    <% } else { %>
+      <a href="/new_storyset">Utwórz pierwszy zestaw historyjek</a>
+    <% } %>
+  <% } else { %>
+    <ul id="storysets">
+      <% storysets.forEach(function(storyset){ %>
+        <li><a href="/view/<%= storyset.slug %>"><%= storyset.name %></a></li>
+      <% }) %>
+    </ul>
+     <% if (user != null) { %>
+      <a href="/new_storyset">Dodaj nowy zestaw historyjek</a>
+      <% } %>
+   <% } %>
 </main>
 
 <%- include("foot.partial.ejs") %>
