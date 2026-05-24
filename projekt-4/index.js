@@ -351,9 +351,6 @@ app.post("/delete/:storyset_slug", auth.login_required, (req, res) => {
   res.redirect("/");
 });
 
-app.post("/edit/:storyset_slug/:story_id", auth.login_required, (req, res) => {
-  res.redirect(`/edit/${req.params.storyset_slug}`);
-});
 
 app.listen(port, () => {
   console.log("\nRemeber.\nThis site is a joke and should be thought of as one.\n");

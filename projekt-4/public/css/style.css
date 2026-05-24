@@ -22,7 +22,7 @@ html[data-theme='dark'] {
     --banner-background: #3a28287c;
     --button-background: rgb(63, 36, 36);
     --text-color-normal: #ddd;
-    --text-color-link: rgb(102, 154, 202);
+    --text-color-link: rgb(192, 217, 240);
 }
 
 html[data-theme='discoo'] {
@@ -34,7 +34,12 @@ html[data-theme='discoo'] {
     --text-color-normal: #47c8fc;
     --text-color-link: rgb(0, 217, 255);
 }
-
+p{
+  font-size: large;
+}
+.edit-link{
+  font-size: medium;
+}
 .disco{
   pointer-events: none;
   position: fixed;
@@ -92,10 +97,6 @@ a:link {
 
 a:visited {
   color: var(--text-color-link);
-}
-
-.action-link {
-    font-size: 0.8rem;
 }
 
 .story-action {

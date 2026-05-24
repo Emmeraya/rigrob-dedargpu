@@ -3,7 +3,7 @@
   <h1><%= title %></h1>
   <div class="storyset-author">Autor: <%= storyset.author.username %></div>
   <% if (storyset.editableBy(user)) { %>
-  <a href="/edit/<%= storyset.slug %>" class="action-link">Edytuj kategorię</a>
+  <a href="/edit/<%= storyset.slug %>" class="edit-link">Edytuj kategorię</a>
    <% } %>
   <% if (storyset.stories && storyset.stories.length > 0) { %>
     <ul id="stories">
@@ -19,7 +19,7 @@
   <% if (storyset.editableBy(user)) { %>
   <div>
     <h2>Nowa Historyjka</h2>
-     <b><h3><a href="/add_story/<%= storyset.slug %>">Stwórz nową historyjkę</a></h3></b>
+     <b><h3><a class="edit-link" href="/add_story/<%= storyset.slug %>">Stwórz nową historyjkę</a></h3></b>
   </div>
   <% } %>
 </main>
