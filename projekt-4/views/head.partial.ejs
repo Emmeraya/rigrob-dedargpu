@@ -15,15 +15,21 @@
       <audio id="disco-audio" src="/OIIAIOIIIAI.mp3" loop preload="auto"></audio>
       <div class="settings">
         <section class="controls">
-          <a href="/settings/toggle-theme?next=<%- encodeURIComponent(page) %>">
-            <% if (app.theme === "dark") { %>
-              Jasny | <strong>Ciemny</strong> | Discoo 
-            <% } else if (app.theme === "discoo") { %>
-              Jasny | Ciemny | <strong>Discoo</strong>
-            <% } else { %>
-              <strong>Jasny</strong> | Ciemny | Discoo
-            <% } %>
-          </a>
+          <% if (app.theme === "light") { %>
+            <strong>Jasny</strong>
+          <% } else { %>
+            <a href="/settings/toggle-theme?theme=light&next=<%= encodeURIComponent(page) %>">Jasny</a>
+          <% } %> |
+          <% if (app.theme === "dark") { %>
+            <strong>Ciemny</strong>
+          <% } else { %>
+            <a href="/settings/toggle-theme?theme=dark&next=<%= encodeURIComponent(page) %>">Ciemny</a>
+          <% } %> |
+          <% if (app.theme === "discoo") { %>
+            <strong>Discoo</strong>
+          <% } else { %>
+            <a href="/settings/toggle-theme?theme=discoo&next=<%= encodeURIComponent(page) %>">Discoo</a>
+          <% } %>
         </section>
         <button id="disco-play-button" type="button" hidden>Włącz disco</button>
       </div>

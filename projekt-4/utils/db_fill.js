@@ -25,7 +25,7 @@ const storysets = {
 
 console.log("Populating db...");
 
-let student = await user.createUser("student", "changeme");
+let student = await user.createUser("student", "student123");
 
 for (let [slug, data] of Object.entries(storysets)) {
   if (stories.hasStoryset(slug)) {
