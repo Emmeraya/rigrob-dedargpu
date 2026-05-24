@@ -9,7 +9,9 @@ npm run dev
 **Dane testowe do bazy danych:**
 npm run db_fill
 
-**konto Student:**\n
+**konto Student:**
+
+
 login: student hasło: student123
 
 
@@ -17,5 +19,7 @@ login: student hasło: student123
 npm run create_admin
 
 
-**konto admin:**\n
+**konto admin:**
+
+
 login: admin hasło: admin123
