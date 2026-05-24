@@ -5,10 +5,17 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "postinstall": "test -f .env || npm run generate_env",
+    "generate_env": "./utils/generate_env.sh > .env",
+
+    "predev": "test -f .env || npm run generate_env",
     "dev": "node --watch --env-file .env ./index.js",
-    "db_fill": "node --env-file .env utils/db_fill.js",
+
+    "precreate_admin": "test -f .env || npm run generate_env",
     "create_admin": "node --env-file .env utils/create_admin.js",
-    "generate_env": "./utils/generate_env.sh > .env"
+
+    "predb_fill": "test -f .env || npm run generate_env",
+    "db_fill": "node --env-file .env utils/db_fill.js"
   },
   "author": "",
   "license": "ISC",
