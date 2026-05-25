@@ -8,17 +8,13 @@ const CONSENT_PARAMS = { maxAge: ONE_MONTH, secure: true, httpOnly: true };
 
 export function themeToggle(req, res) {
   const themes = ["light", "dark", "discoo"];
+  let selectedTheme=req.query.theme;
 
-  let currentTheme = req.cookies[THEME_COOKIE] || "light";
-  let currentIndex = themes.indexOf(currentTheme);
-
-  if (currentIndex === -1) {
-    currentIndex = 0;
+  if(!selectedTheme in themes){
+    selectedTheme.theme="light";
   }
 
-  const nextTheme = themes[(currentIndex + 1) % themes.length];
-
-  res.cookie(THEME_COOKIE, nextTheme, {
+  res.cookie(THEME_COOKIE, selectedTheme, {
     maxAge: ONE_MONTH,
     secure: true,
   });
