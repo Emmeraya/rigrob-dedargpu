@@ -121,10 +121,12 @@ export function deleteStoryset(storysetSlug) {
 }
 
 export function addStoryset(slug, name, author) {
+  name = cleanText(name);
   return db_ops.insert_storyset.get(slug, name, author.id);
 }
 
 export function updateStoryset(slug, newSlug, newName) {
+  newName = cleanText(newName);
   return db_ops.update_storyset_by_slug.get({
     $slug: slug,
     $new_slug: newSlug,
@@ -136,17 +138,23 @@ export function validateStoryData(story) {
   var errors = [];
   var fields = ["tytul", "opis"];
   for (let field of fields) {
-    if (!story.hasOwnProperty(field)) errors.push(`Missing field '${field}'`);
-    else {
-      if (typeof story[field] != "string")
-        errors.push(`'${field}' expected to be string`);
-      else {
-        if (story["tytul"].length < 1 || story["tytul"].length > 500)
-          errors.push(`tytul expected length: 1-500`);
-        if (story["opis"].length < 1 || story["opis"].length > 2000)
-          errors.push(`opis expected length: 1-2000`);
+    if (!story.hasOwnProperty(field)) {
+      errors.push(`Missing field '${field}'`);
+    } else if (typeof story[field] != "string") {
+      errors.push(`'${field}' expected to be string`);
+    } else {
+      story[field] = cleanText(story[field]);
+
+      if (story[field].length < 1) {
+        errors.push(`${field} nie może składać się wyłącznie ze spacji`);
       }
     }
+  }
+  if (story.tytul.length > 500) {
+    errors.push(`tytul expected length: 1-500`);
+  }
+  if (story.opis.length > 2000) {
+    errors.push(`opis expected length: 1-2000`);
   }
   return errors;
 }
@@ -156,6 +164,7 @@ export function validateStorysetName(name) {
   if (typeof name != "string") {
     errors.push("Storyset name should be a string");
   } else {
+    name = cleanText(name);
     if (name.length < 3 || name.length > 100) {
       errors.push("Storyset name should have 3-100 characters");
     }
@@ -165,6 +174,7 @@ export function validateStorysetName(name) {
 }
 
 export function generateStorysetSlug(name) {
+  name = cleanText(name);
   const storysetId = name
     .toLowerCase()
     .replace(/(\s|[.-])+/g, "-")
@@ -178,6 +188,11 @@ export function canEdit(storysetSlug, user) {
   storyset.editableBy = storysetEditableBy;
 
   return storyset.editableBy(user);
+}
+
+function cleanText(value) {
+
+  return value.trim().replace(/\s+/g, " ");
 }
 
 export default {

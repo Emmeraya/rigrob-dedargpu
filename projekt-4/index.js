@@ -9,9 +9,6 @@ import auth from "./controllers/auth.js";
 import user from "./systems/user.js";
 
 const port = process.env.PORT || 8000;
-const LAST_VIEWED_COOKIE = "__Host-story-last-viewed";
-const ONE_DAY = 24 * 60 * 60 * 1000;
-const ONE_MONTH = 30 * ONE_DAY;
 const SECRET = process.env.SECRET;
 
 if (SECRET == null) {
@@ -46,43 +43,27 @@ authRouter.post("/login", auth.login_post);
 authRouter.get("/logout", auth.logout);
 app.use("/auth", authRouter);
 
+function renderForbidden(res) {
+  return res.status(403).render("error", {
+    title: "Brak uprawnień",
+    message: "Nie możesz edytować ani usuwać rzeczy, których nie jesteś autorem.",
+  });
+}
+
+
 app.get("/", (req, res) => {
-  var last_viewed_storysets = null;
-  if (res.locals.app.cookie_consent && req.signedCookies[LAST_VIEWED_COOKIE]) {
-    let last_viewed = req.signedCookies[LAST_VIEWED_COOKIE] || [];
-    last_viewed_storysets = last_viewed
-      .map((x) => parseInt(x, 10))
-      .filter((x) => !isNaN(x))
-      .map((id) => stories.getStorysetSummary(id));
-  }
   res.render("storysets", {
     title: "Zestawy historyjek",
     storysets: stories.getStorysetSummaries(),
-    last_viewed_storysets,
   });
 });
 
 app.get("/view/:storyset_slug", (req, res) => {
   const storyset = stories.getStoryset(req.params.storyset_slug);
-  
+
   if (storyset != null) {
-    storyset.author =user.getUser(storyset.author_id);
-    if (res.locals.app.cookie_consent) {
-      let last_viewed_dirty = req.signedCookies[LAST_VIEWED_COOKIE] || [];
-      let last_viewed = [
-        storyset.storyset_slug,
-        ...last_viewed_dirty
-          .map((x) => parseInt(x, 10))
-          .filter((x) => !isNaN(x) && x !== storyset.storyset_slug)
-          .slice(0, 2),
-      ];
-      res.cookie(LAST_VIEWED_COOKIE, last_viewed, {
-        httpOnly: true,
-        secure: true,
-        maxAge: ONE_MONTH,
-        signed: true,
-      });
-    }
+    storyset.author = user.getUser(storyset.author_id);
+
     res.render("storyset", {
       title: storyset.name,
       storyset,
@@ -98,8 +79,7 @@ app.post("/add_story/:storyset_slug", auth.login_required, (req, res) => {
     res.sendStatus(404);
   } else {
     if (!stories.canEdit(storyset_slug, res.locals.user)) {
-          res.status(401);
-          res.redirect("/");
+          return renderForbidden(res);
     }
     else{
       let story_data = {
@@ -201,8 +181,7 @@ app.get("/edit/:storyset_slug", auth.login_required, (req, res) => {
   var storyset = stories.getStoryset(storyset_slug);
   if (storyset != null) {
     if (!storyset.editableBy(res.locals.user)) {
-      res.status(401);
-      res.redirect("/");
+      return renderForbidden(res);
     } else {
       res.render("storyset_edit", {
         errors,
@@ -219,8 +198,7 @@ app.post("/edit/:storyset_slug", auth.login_required, (req, res) => {
   const storyset_slug = req.params.storyset_slug;
   if (stories.hasStoryset(storyset_slug)) {
     if (!stories.canEdit(storyset_slug, res.locals.user)) {
-          res.status(401);
-          res.redirect("/");
+          return renderForbidden(res);
     } else {
       const storyset_name = req.body.name;
       var new_storyset_slug = null;
@@ -271,8 +249,7 @@ app.get("/edit/:storyset_slug/:story_id", auth.login_required, (req, res) => {
   }
 
   if (!storyset.editableBy(res.locals.user)) {
-    res.status(401);
-    return res.redirect("/");
+    return renderForbidden(res);
   }
 
   storyset.author = user.getUser(storyset.author_id);
@@ -298,8 +275,7 @@ app.post("/edit/:storyset_slug/:story_id", auth.login_required, (req, res) => {
     res.sendStatus(404);
   } else {
     if (!stories.canEdit(storyset_slug, res.locals.user)) {
-          res.status(401);
-          res.redirect("/");
+          return renderForbidden(res);
     } else {
       const story = {
         tytul: req.body.tytul,
@@ -329,8 +305,7 @@ app.post("/delete/:storyset_slug/:story_id", auth.login_required, (req, res) => 
     res.sendStatus(404);
   } else {
     if (!stories.canEdit(storyset_slug, res.locals.user)) {
-          res.status(401);
-          res.redirect("/");
+          return renderForbidden(res);
     } else {
       stories.deleteStoryById(story_id);
       res.redirect(`/edit/${storyset_slug}`);
@@ -344,8 +319,7 @@ app.post("/delete/:storyset_slug", auth.login_required, (req, res) => {
     return res.sendStatus(404);
   }
   if (!stories.canEdit(storyset_slug, res.locals.user)) {
-    res.status(401);
-    return res.redirect("/");
+    return renderForbidden(res);
   }
   stories.deleteStoryset(storyset_slug);
   res.redirect("/");
