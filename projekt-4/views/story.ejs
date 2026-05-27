@@ -1,7 +1,7 @@
 <%- include("head.partial.ejs") %>
 <main>
   <h1><%= title %></h1>
-  <div class="storyset-author"><p>Autor: <%= storyset.author.username %></p></div>
+  <div class="storyset-author"><p>Autor: <%= storyset.author ? storyset.author.username : "nieznany autor" %></p></div>
   <% if (storyset.editableBy(user)) { %>
   <a class="edit-link" href="/edit/<%= storyset.slug %>/<%= story.id %>" class="action-link">Edytuj historię</a>
    <% } %><br><br>

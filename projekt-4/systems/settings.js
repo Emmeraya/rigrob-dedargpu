@@ -10,8 +10,8 @@ export function themeToggle(req, res) {
   const themes = ["light", "dark", "discoo"];
   let selectedTheme=req.query.theme;
 
-  if(!selectedTheme in themes){
-    selectedTheme.theme="light";
+  if((!themes.includes(selectedTheme))){
+    selectedTheme="light";
   }
 
   res.cookie(THEME_COOKIE, selectedTheme, {

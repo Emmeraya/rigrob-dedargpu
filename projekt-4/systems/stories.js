@@ -126,6 +126,9 @@ export function addStoryset(slug, name, author) {
 }
 
 export function updateStoryset(slug, newSlug, newName) {
+  if (author == null) {
+    return null;
+  }
   newName = cleanText(newName);
   return db_ops.update_storyset_by_slug.get({
     $slug: slug,
@@ -136,6 +139,9 @@ export function updateStoryset(slug, newSlug, newName) {
 
 export function validateStoryData(story) {
   var errors = [];
+   if (story == null || typeof story !== "object") {
+    return ["Story data should be an object"];
+  }
   var fields = ["tytul", "opis"];
   for (let field of fields) {
     if (!story.hasOwnProperty(field)) {
@@ -174,6 +180,9 @@ export function validateStorysetName(name) {
 }
 
 export function generateStorysetSlug(name) {
+  if (typeof name !== "string") {
+    return "";
+  }
   name = cleanText(name);
   const storysetId = name
     .toLowerCase()
@@ -185,6 +194,10 @@ export function generateStorysetSlug(name) {
 
 export function canEdit(storysetSlug, user) {
   let storyset = db_ops.get_storyset_by_slug.get(storysetSlug);
+  
+  if (storyset == null) {
+    return false;
+  }
   storyset.editableBy = storysetEditableBy;
 
   return storyset.editableBy(user);

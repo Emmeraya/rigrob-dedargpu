@@ -112,6 +112,9 @@ export function addAttribute(userId, name, value) {
   }
 
   let queryResult = db_ops.get_attributes.get(userId);
+   if (queryResult == null) {
+    return "user not found";
+  }
   let attributes =
     queryResult.attributes != null ? JSON.parse(queryResult.attributes) : {};
   attributes[name] = value;

@@ -78,7 +78,7 @@ header section.controls {
 main {
   text-align: center;
     padding: 1rem;
-    overflow-x: scroll;
+    overflow-x: auto;
 }
 ul{
   padding:0px;
